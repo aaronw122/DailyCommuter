@@ -24,6 +24,7 @@ export default function Bus (){
 
     const [directionOptions, setDirectionOptions] = useState<SimpleDirection[]>([]);
 
+    const showDirections = directionOptions.length > 0;
 
     useEffect(() => {
 
@@ -46,6 +47,8 @@ export default function Bus (){
     }, [stopId]);
 
     const [stopOptions, setStopOptions] = useState<SimpleStop[]>([]);
+
+    const showStops = stopOptions.length > 0;
 
 
     useEffect(() => {
@@ -84,15 +87,6 @@ export default function Bus (){
     return(
         <Page
             routeHeader = "Route"
-            directionHeader = "Direction"
-            stopHeader = "Stop"
-            direction1={direction1}
-            direction2={direction2}
-            selectedDirection={selectedDirectionIndex}
-            onDirectionSelect={(idx: 0 | 1) => {
-                const newDir = idx === 0 ? direction1 : direction2;
-                setDirection(newDir);
-            }}
             routeDropdown={{
                 data: busRoutesData,
                 placeholder:'Select a route',
@@ -104,7 +98,21 @@ export default function Bus (){
                     setRouteName(item.label)
                 },
             }}
-            stopDropdown={{
+            {...(showDirections? {
+                directionHeader:"Direction",
+                direction1,
+                //technically this is implied with new syntax, don't have to add the ":direction1"
+                direction2,
+                selectedDirection:selectedDirectionIndex,
+                onDirectionSelect: (idx: 0 | 1) => {
+                const newDir = idx === 0 ? direction1 : direction2;
+                setDirection(newDir);
+            },
+            } : {} )}
+
+            {...(showStops? {
+                stopHeader:"Stop",
+                stopDropdown:{
                 data: stopOptions,
                 placeholder:'Select a route',
                 searchPlaceholder:'Find a route',
@@ -114,8 +122,8 @@ export default function Bus (){
                     setStopId(item.value);
                     setStopName(item.label);
                 },
+            }}: {} )}
 
-        }}
             buttonText = "Save to favorites"
 
             onPress={() => {

@@ -1,6 +1,4 @@
-import { Text, View, StyleSheet } from 'react-native';
-import Header from '@/components/header'
-import Header2  from '@/components/header2'
+import { StyleSheet } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import MyTabs from '@/components/segment'
 

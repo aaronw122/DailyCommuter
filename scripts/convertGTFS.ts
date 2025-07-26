@@ -138,6 +138,7 @@ async function main() {
 
     // Wait for stream to finish
     await new Promise<void>((resolve, reject) => {
+        // @ts-ignore
         trainRoutesStream.end((err) => {
             if (err) reject(err);
             else resolve();
@@ -208,6 +209,7 @@ async function main() {
 
     // Wait for stream to finish
     await new Promise<void>((resolve, reject) => {
+        // @ts-ignore
         routeStopStream.end((err) => {
             if (err) reject(err);
             else resolve();
@@ -249,6 +251,7 @@ async function main() {
 
     // Wait for stream to finish
     await new Promise<void>((resolve, reject) => {
+        // @ts-ignore
         finalStream.end((err) => {
             if (err) reject(err);
             else resolve();
@@ -298,6 +301,7 @@ async function main() {
 
     // Wait for stream to finish
     await new Promise<void>((resolve, reject) => {
+        // @ts-ignore
         cleanStream.end((err) => {
             if (err) reject(err);
             else resolve();

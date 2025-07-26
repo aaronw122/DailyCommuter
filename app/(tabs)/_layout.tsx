@@ -17,7 +17,7 @@ export default function TabLayout() {
     return (
         <Tabs
             screenOptions={{
-                tabBarActiveTintColor: '#000000',
+                tabBarActiveTintColor: '#0078C1',
                 tabBarInactiveTintColor:'#00000080',
                 headerStyle: {
                     backgroundColor: '#ffffff',
@@ -56,7 +56,7 @@ export default function TabLayout() {
                 options={{
                     headerShown: true,
                     headerTitle: 'Favorites',
-                    headerTitleStyle: {fontSize: 24, fontWeight: '400'},
+                    headerTitleStyle: {fontSize: 24, fontWeight: '400', color: '#000000'},
                     headerTitleAlign: 'center',
                     headerRight: () => (
                         <Pressable onPress={() => router.push('/modals/createFavorite')} style={{marginRight: 25}}>

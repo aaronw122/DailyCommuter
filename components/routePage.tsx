@@ -10,14 +10,14 @@ import React, {useState, useEffect} from 'react';
 
 type pageProps = ctaProps & {
     routeDropdown: dropdownProps;
-    stopDropdown: dropdownProps;
+    stopDropdown?: dropdownProps;
     routeHeader: string;
-    directionHeader: string;
-    stopHeader: string;
-    direction1: string;
-    direction2: string;
-    selectedDirection: 0 | 1 | null;
-    onDirectionSelect: (idx: 0 | 1) => void;
+    directionHeader?: string;
+    stopHeader?: string;
+    direction1?: string;
+    direction2?: string;
+    selectedDirection?: 0 | 1 | null;
+    onDirectionSelect?: (idx: 0 | 1) => void;
     theme: string;
 }
 
@@ -28,6 +28,10 @@ export default function Page ({routeHeader, directionHeader, stopHeader,
                                   selectedDirection, onDirectionSelect, buttonText, onPress, theme
                               }: pageProps) {
 
+    const showDirections = !!(directionHeader && direction1 && direction2 && onDirectionSelect);
+    const showStops      = !!(stopHeader && stopDropdown);
+
+
     return(
         <GestureHandlerRootView style={styles.container}>
             <View style={styles.routeHeader}>
@@ -36,32 +40,31 @@ export default function Page ({routeHeader, directionHeader, stopHeader,
             <View style={styles.dropdownWrapper}>
                 <DropdownComponent {...routeDropdown}/>
             </View>
-            {routeDropdown.value != null && (
+            {showDirections && routeDropdown.value != null && (
                 <>
                     <View style={styles.routeHeader}>
-                        <Header2 text={directionHeader}/>
+                        <Header2 text={directionHeader as string}/>
                     </View>
                     <View style={styles.dropdownWrapper}>
                         <ButtonPair
-                            topText={direction1}
-                            bottomText={direction2}
-                            selectedIndex={selectedDirection}
-                            onSelect={onDirectionSelect}
+                            topText={direction1 as string}
+                            bottomText={direction2 as string}
+                            selectedIndex={selectedDirection ?? null}
+                            onSelect={onDirectionSelect as (idx: 0 | 1) => void}
                         />
                     </View>
                 </>
             )}
-            {(selectedDirection != null) && (routeDropdown.value != null)  && (
-                <>
+            {showStops && (selectedDirection != null) && routeDropdown.value != null && (                <>
                     <View style={styles.routeHeader}>
-                        <Header2 text={stopHeader}/>
+                        <Header2 text={stopHeader as string}/>
                     </View>
                     <View style={styles.dropdownWrapper}>
-                        <DropdownComponent {...stopDropdown}/>
+                        {stopDropdown && <DropdownComponent {...stopDropdown}/>}
                     </View>
                 </>
             )}
-            {stopDropdown.value != null && (
+            {showStops && stopDropdown && stopDropdown.value != null && (
                 <>
                     <View style={styles.dropdownWrapper}>
                         <CtaButton
