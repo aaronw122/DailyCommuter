@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "Commuter_v4",
-    "slug": "Commuter_v4",
+    "name": "Daily Commuter",
+    "slug": "daily-commuter",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "commuterv4",
+    "scheme": "dailycommuter",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
@@ -56,7 +56,7 @@
     "extra": {
       "router": {},
       "eas": {
-        "projectId": "ab1c045f-dce5-4a05-bfe0-94b7088a09af"
+        "projectId": "c9a80fa2-06e8-42f4-b268-8d5948e4a622"
       }
     },
     "owner": "aaronw122"
