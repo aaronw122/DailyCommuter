@@ -1,0 +1,8 @@
+ios/
+android/
+
+# Big local-only stuff
+node_modules/
+.expo/
+.idea/
+*.log
