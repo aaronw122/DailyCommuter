@@ -4,6 +4,7 @@ import { useRouter } from 'expo-router';
 import {trainRoutesData, trainDirectionData} from '@/app/routesData';
 import {TrainStop} from "@/app/types/types";
 
+const CTA_URL = process.env.EXPO_PUBLIC_API_URL ?? '';
 
 
 export default function Train (){
@@ -62,7 +63,7 @@ useEffect(() => {
         return;
     }
     console.log("direction:", direction)
-    fetch(`https://ctas.us/api/train/stops?routeId=${routeId}&direction=${direction}`)
+    fetch(`${CTA_URL}/api/train/stops?routeId=${routeId}&direction=${direction}`)
         .then(response => response.json())
         .then((stops: TrainStop[]) => setStopOptions(stops))
         .catch(err => {

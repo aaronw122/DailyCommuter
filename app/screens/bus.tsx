@@ -5,6 +5,7 @@ import { useRouter } from 'expo-router';
 import {SimpleDirection, SimpleStop} from "@/app/types/types";
 import {busRoutesData} from '@/app/routesData';
 
+const CTA_URL = process.env.EXPO_PUBLIC_API_URL ?? '';
 
 export default function Bus (){
     const [routeId, setRouteId]    = useState<string | number | null>(null);
@@ -34,7 +35,7 @@ export default function Bus (){
             return;
         }
 
-        fetch(`https://ctas.us/api/bus/directions?routeId=${routeId}`)
+        fetch(`${CTA_URL}/api/bus/directions?routeId=${routeId}`)
             .then(response => response.json())
             .then((directions: SimpleDirection[]) => setDirectionOptions(directions))
             .catch(err => console.error('CTA fetch error:', err));
@@ -57,7 +58,7 @@ export default function Bus (){
         if (routeId == null || direction == null) {
             return;
         }
-        fetch(`https://ctas.us/api/bus/stops?routeId=${routeId}&direction=${direction}`)
+        fetch(`${CTA_URL}/api/bus/stops?routeId=${routeId}&direction=${direction}`)
             .then(response => response.json())
             .then((stops: SimpleStop[]) => setStopOptions(stops))
             .catch(err => {

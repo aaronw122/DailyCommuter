@@ -1,13 +1,12 @@
-import React, {useLayoutEffect, useEffect} from 'react'
-import { View, Text, StyleSheet } from 'react-native'
+import React, {useLayoutEffect} from 'react'
+import { View, StyleSheet } from 'react-native'
 import StopCard from "@/components/stopCard";
 import {useLocalSearchParams, useNavigation} from 'expo-router';
 import {useFavorites} from "@/app/contexts/favoritesContext";
 import type {Favorite, FavoriteStop, SimpleTime} from '@/app/types/types';
-import { useQuery, useQueries } from "@tanstack/react-query";
-import { Platform } from 'react-native';
-import Constants from 'expo-constants';
+import {useQueries } from "@tanstack/react-query";
 
+const CTA_URL = process.env.EXPO_PUBLIC_API_URL ?? '';
 
 export default function FavoriteDetail() {
     const {favoriteId} = useLocalSearchParams<{favoriteId: string}>();
@@ -26,7 +25,7 @@ export default function FavoriteDetail() {
      */
 
     async function busTime(routeId: string, direction: string, stopId: string) {
-        const response = await fetch(`https://ctas.us/api/bus/times?routeId=${routeId}&direction=${direction}&stopId=${stopId}`);
+        const response = await fetch(`${CTA_URL}/api/bus/times?routeId=${routeId}&direction=${direction}&stopId=${stopId}`);
 
         const json : SimpleTime[] = await response.json();
 
@@ -36,7 +35,7 @@ export default function FavoriteDetail() {
     async function trainTime(stopId: string, routeId: string) {
 
         try {
-            const response = await fetch(`https://ctas.us/api/train/times?&stopId=${stopId}&routeId=${routeId}`);
+            const response = await fetch(`${CTA_URL}/api/train/times?&stopId=${stopId}&routeId=${routeId}`);
 
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);

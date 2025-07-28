@@ -54,7 +54,7 @@ export default function SaveFavorite() {
     return (
         <GestureHandlerRootView style={styles.container}>
             <View style ={{flex: 1, width: '100%'}}>
-                <View style={{ width: '100%', paddingHorizontal: 25, alignItems: 'center' }}>
+                <View style={{ width: '100%', paddingHorizontal: 25, alignItems: 'center'}}>
                     <CtaButton buttonText={"+ New Favorite"} onPress={() => {
                         router.push('/modals/createFavorite');
                         console.log('newFav Clicked')
