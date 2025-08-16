@@ -8,6 +8,5 @@
 #ifndef DailyCommuter_Bridging_Header_h
 #define DailyCommuter_Bridging_Header_h
 
-#import <React/RCTBridgeModule.h>
 
 #endif /* DailyCommuter_Bridging_Header_h */
