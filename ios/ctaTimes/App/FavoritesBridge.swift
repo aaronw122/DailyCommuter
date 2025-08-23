@@ -1,26 +1,51 @@
+// WidgetKit integration for widget timeline reload
+#if canImport(WidgetKit)
+import WidgetKit
+#endif
 import Foundation
+import Dispatch
 
 @objc(FavoritesBridge)
 final class FavoritesBridge: NSObject, RCTBridgeModule {
   @objc static func moduleName() -> String! { "FavoritesBridge" }
   @objc static func requiresMainQueueSetup() -> Bool { false }
 
-  private let store = SharedStore(groupID: "group.com.yourco.dailycommuter") // replace with yours
   private let queue = DispatchQueue(label: "FavoritesBridge.queue", qos: .utility)
 
-  /// JS: NativeModules.FavoritesBridge.saveFavorites(JSON.stringify(favorites))
-  @objc func saveFavorites(_ json: String,
-                           resolver resolve: @escaping RCTPromiseResolveBlock,
-                           rejecter reject: @escaping RCTPromiseRejectBlock) {
+  @objc(saveFavorites:resolver:rejecter:)
+  func saveFavorites(_ dtosJson: String,
+                     resolver resolve: @escaping RCTPromiseResolveBlock,
+                     rejecter reject: @escaping RCTPromiseRejectBlock) {
     queue.async {
       do {
-        guard let data = json.data(using: .utf8) else {
+        guard let data = dtosJson.data(using: .utf8) else {
           reject("INVALID_JSON", "Failed to encode JSON string", nil); return
         }
-        let list = try JSONDecoder().decode([FavoriteDTO].self, from: data)
-        try self.store.saveFavoritesDTO(list)
-        resolve(nil)
+        if data.isEmpty {
+          reject("EMPTY_PAYLOAD", "Favorites payload was an empty string", nil); return
+        }
+        NSLog("🧩 FavoritesBridge.saveFavorites bytes=%ld", data.count)
+
+        // Decode RN payload to DTOs (tolerant to `type`/`kind`), then normalize by re-encoding.
+        let dtos = try JSONDecoder().decode([FavoriteDTO].self, from: data)
+        let normalized = try JSONEncoder().encode(dtos) // FavoriteStopDTO encodes `kind`
+
+        // Decode normalized JSON into domain model
+        let favorites = try JSONDecoder().decode([Favorite].self, from: normalized)
+
+        // Persist + refresh widget
+        Task { @MainActor in
+          FavoritesStore.shared.replaceAll(with: favorites)
+          #if canImport(WidgetKit)
+          WidgetCenter.shared.reloadTimelines(ofKind: "ctaTimes")
+          #endif
+          resolve(NSNull())
+        }
       } catch {
+        // Extra diagnostics to help JS-side debugging
+        if let json = try? JSONSerialization.jsonObject(with: dtosJson.data(using: .utf8) ?? Data()) as? [Any] {
+          NSLog("🧩 FavoritesBridge.saveFavorites JSON array count=%ld", json.count)
+        }
         reject("SAVE_ERROR", "Failed to save favorites: \(error.localizedDescription)", error)
       }
     }

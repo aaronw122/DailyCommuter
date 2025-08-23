@@ -1,6 +1,10 @@
+
 import Expo
 import React
 import ReactAppDependencyProvider
+#if canImport(WidgetKit)
+import WidgetKit
+#endif
 
 @UIApplicationMain
 public class AppDelegate: ExpoAppDelegate {
@@ -20,7 +24,20 @@ public class AppDelegate: ExpoAppDelegate {
     reactNativeDelegate = delegate
     reactNativeFactory = factory
     bindReactNativeFactory(factory)
+  
+#if DEBUG
+Task { @MainActor in
+    FavoritesStore.shared.refreshArrivalsCache()
 
+    // Give the detached task a moment (debug only)
+    try? await Task.sleep(nanoseconds: 2_000_000_000)
+    let cached = FavoritesStore.shared.loadCachedArrivals()
+    print("✅ Post-refresh arrivals in app:", cached.count)
+    WidgetCenter.shared.reloadAllTimelines()
+}
+#endif
+    
+    
 #if os(iOS) || os(tvOS)
     window = UIWindow(frame: UIScreen.main.bounds)
     factory.startReactNative(
@@ -28,7 +45,6 @@ public class AppDelegate: ExpoAppDelegate {
       in: window,
       launchOptions: launchOptions)
 #endif
-
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
 
@@ -68,3 +84,6 @@ class ReactNativeDelegate: ExpoReactNativeFactoryDelegate {
 #endif
   }
 }
+
+
+

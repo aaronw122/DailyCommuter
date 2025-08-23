@@ -1,4 +1,4 @@
-import {Pressable, StyleSheet, ActionSheetIOS, Text, View, Image} from 'react-native';
+import {StyleSheet, ActionSheetIOS, View} from 'react-native';
 import {GestureHandlerRootView} from "react-native-gesture-handler";
 import Selector from "@/components/selector";
 import {useFavorites} from "@/app/contexts/favoritesContext";

@@ -1,5 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import React, { createContext, useContext, useEffect, useReducer } from 'react';
+import React, { createContext, useContext, useEffect, useReducer, useRef } from 'react';
+import { NativeModules, Platform } from 'react-native';
 import { Favorite } from '@/app/types/types'
 
 type Action =
@@ -35,6 +36,7 @@ export const FavoritesContext = createContext<{
 export function FavoritesProvider({ children }: { children: React.ReactNode }) {
     // 8
     const [favorites, dispatch] = useReducer(reducer, []);
+    const didLoadRef = useRef(false);
 
     useEffect(() => {
         AsyncStorage.getItem('favorites')
@@ -42,11 +44,35 @@ export function FavoritesProvider({ children }: { children: React.ReactNode }) {
                 if (data) {
                     dispatch({ type: 'load', favorites: JSON.parse(data) });
                 }
+            })
+            .finally(() => {
+                didLoadRef.current = true;
             });
     }, []);
 
+    const saveFavoritesToWidget = async (favs: Favorite[]) => {
+        if (Platform.OS !== 'ios') return;
+        const bridge = (NativeModules as any).FavoritesBridge;
+        if (!bridge || typeof bridge.saveFavorites !== 'function') return;
+        try {
+            await bridge.saveFavorites(JSON.stringify(favs));
+        } catch (e) {
+            if (__DEV__) {
+                // eslint-disable-next-line no-console
+                console.warn('saveFavoritesToWidget failed:', e);
+            }
+        }
+    };
+
     useEffect(() => {
+        if (!didLoadRef.current) return;
+        // Persist to local storage immediately
         AsyncStorage.setItem('favorites', JSON.stringify(favorites));
+        // Debounce the native bridge call to avoid spamming on rapid edits
+        const t = setTimeout(() => {
+            void saveFavoritesToWidget(favorites);
+        }, 250);
+        return () => clearTimeout(t);
     }, [favorites]);
 
     return (

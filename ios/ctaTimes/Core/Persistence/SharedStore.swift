@@ -67,6 +67,22 @@ public struct SharedStore {
         try write(list, to: .favorites)
     }
 
+    /// Atomically saves a raw JSON payload for favorites without re-encoding.
+    /// Use when React Native passes a pre-encoded JSON string.
+    public func saveRawFavoritesJSON(_ data: Data) throws {
+        var url = try url(for: .favorites)
+        // Atomic write ensures readers never see a partial file
+        try data.write(to: url, options: .atomic)
+
+        // Widgets may need to read while device is locked
+        try? fileManager.setAttributes([.protectionKey: FileProtectionType.none], ofItemAtPath: url.path)
+
+        // Do not back up cached data to iCloud
+        var values = URLResourceValues()
+        values.isExcludedFromBackup = true
+        try? url.setResourceValues(values)
+    }
+
     // MARK: - Public API (Arrivals)
 
     /// Loads last known arrivals (domain model). Returns empty array if missing/invalid.
