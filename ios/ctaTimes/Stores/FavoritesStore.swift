@@ -30,6 +30,16 @@ final class FavoritesStore: ObservableObject {
         // Warm the arrivals cache on launch so the widget has data ready
         refreshArrivalsCache()
     }
+  
+// MARK: - Favorites file (App Group)
+    private func favoritesFileURL() -> URL? {
+        let url = FileManager.default
+            .containerURL(forSecurityApplicationGroupIdentifier: groupID)?
+            .appendingPathComponent("favorites.json")
+        dcLog("favoritesFileURL = \(url?.path ?? "nil")")
+        return url
+    }
+  
 
     // MARK: CRUD
     func replaceAll(with list: [Favorite]) {
@@ -41,28 +51,45 @@ final class FavoritesStore: ObservableObject {
 
     // MARK: Persistence
     private func load() {
-        if let data = suite.data(forKey: key) {
-            dcLog("load(): found favorites bytes=\(data.count)")
-            if let decoded = try? JSONDecoder().decode([Favorite].self, from: data) {
-                favorites = decoded
-                dcLog("load(): decoded favorites count=\(decoded.count)")
-            } else {
-                dcLog("load(): decode failed")
-            }
-        } else {
-            dcLog("load(): none found")
-        }
-    }
-
-    private func save() {
-        guard let data = try? JSONEncoder().encode(favorites) else {
-            dcLog("save(): encode failed")
-            return
-        }
+      if let data = suite.data(forKey: key),
+         let decoded = try? JSONDecoder().decode([Favorite].self, from: data) {
+        favorites = decoded
+        dcLog("load(): loaded from UserDefaults count=\(decoded.count)")
+      } else if let url = favoritesFileURL(),
+                let data = try? Data(contentsOf: url),
+                let decoded = try? JSONDecoder().decode([Favorite].self, from: data) {
+        favorites = decoded
+        dcLog("load(): loaded from favorites.json count=\(decoded.count)")
+        // Sync back to UserDefaults so subsequent loads are fast
         suite.set(data, forKey: key)
-        dcLog("save(): wrote favorites count=\(favorites.count) bytes=\(data.count)")
+      } else {
+        dcLog("load(): none found")
+      }
     }
 
+  private func save() {
+    guard let data = try? JSONEncoder().encode(favorites) else {
+      dcLog("save(): encode failed")
+      return
+    }
+    // Persist to shared UserDefaults (source of truth for the app)
+    suite.set(data, forKey: key)
+    dcLog("save(): wrote favorites to UserDefaults count=\(favorites.count) bytes=\(data.count)")
+    
+    // Also mirror to favorites.json in the App Group so the widget (and debugging) can read it
+    if let url = favoritesFileURL() {
+      do {
+        try data.write(to: url, options: .atomic)
+        dcLog("save(): wrote favorites.json at \(url.path)")
+      } catch {
+        dcLog("save(): failed writing favorites.json: \(error)")
+      }
+    } else {
+      dcLog("save(): favoritesFileURL() == nil")
+      
+    }
+  }
+  
     // MARK: - Arrivals cache (App Group)
 
     private func arrivalsCacheURL() -> URL? {

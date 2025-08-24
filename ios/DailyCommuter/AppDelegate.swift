@@ -25,17 +25,10 @@ public class AppDelegate: ExpoAppDelegate {
     reactNativeFactory = factory
     bindReactNativeFactory(factory)
   
-#if DEBUG
-Task { @MainActor in
-    FavoritesStore.shared.refreshArrivalsCache()
-
-    // Give the detached task a moment (debug only)
-    try? await Task.sleep(nanoseconds: 2_000_000_000)
-    let cached = FavoritesStore.shared.loadCachedArrivals()
-    print("✅ Post-refresh arrivals in app:", cached.count)
-    WidgetCenter.shared.reloadAllTimelines()
-}
-#endif
+    Task { @MainActor in
+      FavoritesStore.shared.refreshArrivalsCache()
+      WidgetCenter.shared.reloadAllTimelines()
+    }
     
     
 #if os(iOS) || os(tvOS)
