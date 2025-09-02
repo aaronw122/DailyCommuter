@@ -38,7 +38,7 @@ final class FavoritesBridge: NSObject, RCTBridgeModule {
         Task { @MainActor in
           FavoritesStore.shared.replaceAll(with: favorites)
           #if canImport(WidgetKit)
-          WidgetCenter.shared.reloadTimelines(ofKind: "ctaTimes")
+          WidgetCenter.shared.reloadTimelines(ofKind: "CtaTimesWidget")
           #endif
           resolve(NSNull())
         }

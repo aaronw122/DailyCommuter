@@ -121,7 +121,7 @@ final class FavoritesStore: ObservableObject {
 
     /// Fire-and-forget network fetch → write arrivals.json in the App Group.
     /// - Uses CTAServiceLive to fetch arrivals for the current favorites.
-    /// - Serializes via Mapping+Arrival helpers (Array<Arrival>.save).
+    /// - Serializes the new nested `Arrival` model: one per favorite, containing grouped `StopArrival` arrays with their `Times`.
     func refreshArrivalsCache(using service: CTAService = CTAServiceLive(),
                               now: Date = .now) {
         let favs = favorites // snapshot on main actor
@@ -138,7 +138,7 @@ final class FavoritesStore: ObservableObject {
             self.dcLog("Starting network fetch for \(favs.count) favorites → \(url.path)")
             do {
                 let arrivals = try await service.arrivals(for: favs)
-                self.dcLog("Network fetch succeeded: \(arrivals.count) arrivals")
+                self.dcLog("Network fetch succeeded: wrote arrivals payload")
                 arrivals.save(to: url, now: now)
                 self.dcLog("Wrote arrivals.json at \(url.path)")
             } catch {
@@ -169,7 +169,7 @@ final class FavoritesStore: ObservableObject {
             dcLog("loadCachedArrivals: decode failed")
             return []
         }
-        dcLog("Decoded \(arrivals.count) cached arrivals")
+        dcLog("Decoded cached arrivals payload")
         return arrivals
     }
 }

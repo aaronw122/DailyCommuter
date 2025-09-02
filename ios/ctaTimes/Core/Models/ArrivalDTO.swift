@@ -14,5 +14,5 @@ public struct SimpleTimeDTO: Codable, Equatable, Sendable {
     enum CodingKeys: String, CodingKey {
             case times
             case dest
-        }
+    }
 }

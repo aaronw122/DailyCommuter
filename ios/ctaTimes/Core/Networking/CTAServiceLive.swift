@@ -34,55 +34,62 @@ public struct CTAServiceLive: CTAService {
     // Public entry: fetch across all favorite stops
     public func arrivals(for favorites: [Favorite]) async throws -> [Arrival] {
         log("arrivals(for:) favorites=\(favorites.count)")
-        return try await withThrowingTaskGroup(of: [Arrival].self) { group in            for fav in favorites {
+        typealias BucketItem = (favoriteID: String, stop: StopArrival)
+        return try await withThrowingTaskGroup(of: BucketItem.self) { group in
+            for fav in favorites {
                 for stop in fav.stops {
                     group.addTask {
                         switch stop.kind {
                         case .bus:
-                            return try await fetchBusArrivals(
-                              routeId: stop.routeId,
-                              direction: stop.direction,
-                              stopId: stop.stopId)
+                            let stopArrival = try await self.fetchBusStopArrival(
+                                routeId: stop.routeId,
+                                direction: stop.direction,
+                                stopId: stop.stopId
+                            )
+                            return (favoriteID: fav.id, stop: stopArrival)
                         case .train:
-                            return try await fetchTrainArrivals(
-                              stopId: stop.stopId,
-                              routeId: stop.routeId)
+                            let stopArrival = try await self.fetchTrainStopArrival(
+                                stopId: stop.stopId,
+                                routeId: stop.routeId,
+                                direction: stop.direction
+                            )
+                            return (favoriteID: fav.id, stop: stopArrival)
                         }
                     }
                 }
             }
 
-            var merged: [Arrival] = []
-            for try await chunk in group {
-                merged.append(contentsOf: chunk)
+            var buckets: [String: [StopArrival]] = [:]
+            for try await item in group {
+                buckets[item.favoriteID, default: []].append(item.stop)
             }
 
-            log("arrivals(for:) merged \(merged.count) arrivals")
-            // Return merged array as is (optionally sorted by time string)
-            return merged
+            let results: [Arrival] = buckets.map { (favID, stops) in
+                Arrival(favoriteID: favID, stops: stops)
+            }
+            log("arrivals(for:) built \(results.count) favorite payloads")
+            return results
         }
     }
 
     // MARK: - Per-endpoint calls (match RN)
-    private func fetchBusArrivals(routeId: String, direction: String, stopId: String) async throws -> [Arrival] {
+    private func fetchBusStopArrival(routeId: String, direction: String, stopId: String) async throws -> StopArrival {
         let url = try makeURL(path: "/api/bus/times", query: [
             URLQueryItem(name: "routeId", value: routeId),
             URLQueryItem(name: "direction", value: direction),
             URLQueryItem(name: "stopId", value: stopId)
         ])
         let dto: [SimpleTimeDTO] = try await request(url: url)
-        return dto
-            .compactMap { $0.toArrival(stopId: stopId, routeId: routeId) }
+        return StopArrival(stopId: stopId, routeId: routeId, direction: direction, timeDTOs: dto)
     }
 
-    private func fetchTrainArrivals(stopId: String, routeId: String) async throws -> [Arrival] {
+    private func fetchTrainStopArrival(stopId: String, routeId: String, direction: String) async throws -> StopArrival {
         let url = try makeURL(path: "/api/train/times", query: [
             URLQueryItem(name: "stopId", value: stopId),
             URLQueryItem(name: "routeId", value: routeId)
         ])
         let dto: [SimpleTimeDTO] = try await request(url: url)
-        return dto
-            .compactMap { $0.toArrival(stopId: stopId, routeId: routeId) }
+        return StopArrival(stopId: stopId, routeId: routeId, direction: direction, timeDTOs: dto)
     }
 
     // Always fetch fresh over the network; no conditional requests.

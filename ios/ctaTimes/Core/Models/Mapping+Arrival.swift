@@ -7,29 +7,39 @@
 
 import Foundation
 
-extension Arrival {
-    /// Map backend `SimpleTimeDTO` to a domain `Arrival`.
-    /// - `times`: numeric minutes as a string, or "DUE" (arriving now) or "DLY" (delayed/unknown).
-    /// - We store the raw string directly.
-    init?(dto: SimpleTimeDTO, stopId: String, routeId: String) {
-        // Normalize
-        let t = dto.times.trimmingCharacters(in: .whitespacesAndNewlines).uppercased()
-        guard !t.isEmpty else { return nil }
-        self = Arrival(
-            stopId: stopId,
-            routeId: routeId,
-            destination: dto.dest,
-            time: t
-        )
+// MARK: - DTO → Domain (nested Arrival)
+
+extension TimeInfo {
+    /// Map backend `SimpleTimeDTO` to domain `Times`.
+    /// - `time`: numeric minutes as a string, or "DUE" / "DLY". Stored verbatim.
+    init?(dto: SimpleTimeDTO) {
+        let normalized = dto.times.trimmingCharacters(in: .whitespacesAndNewlines).uppercased()
+        guard !normalized.isEmpty else { return nil }
+        self = TimeInfo(time: normalized, destination: dto.dest)
+    }
+}
+
+extension Array where Element == TimeInfo {
+    /// Map an array of DTOs to domain `Times[]`, dropping invalid rows.
+    static func fromDTOs(_ list: [SimpleTimeDTO]) -> [TimeInfo] {
+        list.compactMap(TimeInfo.init(dto:))
+    }
+}
+
+extension StopArrival {
+    /// Convenience initializer to build a `stopArrival` from DTOs for a given stop/route/direction.
+    init(stopId: String, routeId: String, direction: String, timeDTOs: [SimpleTimeDTO]) {
+        self.stopId = stopId
+        self.routeId = routeId
+        self.direction = direction
+        self.time = [TimeInfo].fromDTOs(timeDTOs)
     }
 }
 
 extension SimpleTimeDTO {
-    /// Convenience mapper to domain `Arrival`.
-    /// - Returns: `Arrival` or `nil` if the DTO is not valid.
-    func toArrival(stopId: String, routeId: String) -> Arrival? {
-        Arrival(dto: self, stopId: stopId, routeId: routeId)
-    }
+    /// Convenience mapper to domain `Times` (leaf nodes in the nested model).
+    /// - Returns: `Times` or `nil` if the DTO is not valid.
+    func toTimeInfo() -> TimeInfo? { TimeInfo(dto: self) }
 }
 
 /// Cache payload format for arrivals shared between app and widget.
