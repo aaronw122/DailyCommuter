@@ -15,24 +15,24 @@ private let appGroupID = "group.com.yourco.dailycommuter"
 
 struct Provider: AppIntentTimelineProvider {
     typealias Entry = SimpleEntry
-    typealias Intent = ConfigurationAppIntent
+    typealias Intent = FavoriteSelectionIntent
     func placeholder(in context: Context) -> SimpleEntry {
         SimpleEntry(
             date: Date(),
-            configuration: ConfigurationAppIntent(),
+            configuration: FavoriteSelectionIntent(),
             hasCache: false,
             arrivalsCount: 0,
             lastModified: nil
         )
     }
 
-    func snapshot(for configuration: ConfigurationAppIntent, in context: Context) async -> SimpleEntry {
+    func snapshot(for configuration: FavoriteSelectionIntent, in context: Context) async -> SimpleEntry {
         // Fire-and-forget: ask the app-side FavoritesStore to refresh arrivals.json
         await MainActor.run {
             FavoritesStore.shared.refreshArrivalsCache()
         }
 
-        let status = await CacheStatus.read()
+        let status = await CacheStatus.read(selectedFavoriteID: configuration.favorite?.id)
         return SimpleEntry(
             date: Date(),
             configuration: configuration,
@@ -42,7 +42,7 @@ struct Provider: AppIntentTimelineProvider {
         )
     }
     
-    func timeline(for configuration: ConfigurationAppIntent, in context: Context) async -> Timeline<SimpleEntry> {
+    func timeline(for configuration: FavoriteSelectionIntent, in context: Context) async -> Timeline<SimpleEntry> {
         var entries: [SimpleEntry] = []
         let now = Date()
 
@@ -52,7 +52,7 @@ struct Provider: AppIntentTimelineProvider {
         }
 
         // Entry 1: current status
-        let statusNow = await CacheStatus.read()
+        let statusNow = await CacheStatus.read(selectedFavoriteID: configuration.favorite?.id)
         entries.append(
             SimpleEntry(
                 date: now,
@@ -65,7 +65,7 @@ struct Provider: AppIntentTimelineProvider {
 
         // Entry 2: check again shortly to pick up the newly written cache
         let later = now.addingTimeInterval(60)
-        let statusLater = await CacheStatus.read()
+        let statusLater = await CacheStatus.read(selectedFavoriteID: configuration.favorite?.id)
         entries.append(
             SimpleEntry(
                 date: later,
@@ -88,7 +88,7 @@ private enum CacheStatus {
             .appendingPathComponent("arrivals.json")
     }
 
-    static func read() async -> (exists: Bool, count: Int, lastModified: Date?) {
+    static func read(selectedFavoriteID: String?) async -> (exists: Bool, count: Int, lastModified: Date?) {
         guard let url = url() else { return (false, 0, nil) }
 
         let exists = FileManager.default.fileExists(atPath: url.path)
@@ -98,9 +98,17 @@ private enum CacheStatus {
             modified = values.contentModificationDate
         }
 
-        // Ask FavoritesStore to decode the cached arrivals so we can show a count.
-        let count = await MainActor.run {
-            FavoritesStore.shared.loadCachedArrivals().count
+        // Ask FavoritesStore to decode the cached arrivals and compute a count.
+        // If a favorite is selected, count times for that favorite only; otherwise count all groups.
+        let count = await MainActor.run { () -> Int in
+            let arrivals = FavoritesStore.shared.loadCachedArrivals()
+            if let favID = selectedFavoriteID,
+               let match = arrivals.first(where: { $0.favoriteID == favID }) {
+                // Sum up all time entries across stops for the selected favorite.
+                return match.stops.reduce(0) { $0 + $1.time.count }
+            } else {
+                return arrivals.count
+            }
         }
 
         return (exists, count, modified)
@@ -109,7 +117,7 @@ private enum CacheStatus {
 
 struct SimpleEntry: TimelineEntry {
     let date: Date
-    let configuration: ConfigurationAppIntent
+    let configuration: FavoriteSelectionIntent
 
     // Debug/validation fields
     let hasCache: Bool
@@ -138,6 +146,16 @@ struct ctaTimesEntryView: View {
                 .font(.footnote)
                 .lineLimit(1)
 
+            if let favorite = entry.configuration.favorite {
+                Text("Favorite: \(favorite.name)")
+                    .font(.footnote)
+                    .lineLimit(1)
+            } else {
+                Text("Favorite: All")
+                    .font(.footnote)
+                    .lineLimit(1)
+            }
+
             if let last = entry.lastModified {
                 Text("Updated \(last, style: .time)")
                     .font(.caption2)
@@ -157,7 +175,7 @@ struct ctaTimes: Widget {
     let kind: String = "ctaTimes"
 
     var body: some WidgetConfiguration {
-        AppIntentConfiguration(kind: kind, intent: ConfigurationAppIntent.self, provider: Provider()) { entry in
+        AppIntentConfiguration(kind: kind, intent: FavoriteSelectionIntent.self, provider: Provider()) { entry in
             ctaTimesEntryView(entry: entry)
         }
     }
@@ -165,7 +183,7 @@ struct ctaTimes: Widget {
 
 /// If you already have another `@main` in the widget target, remove this one to avoid duplicates.
 
-#Preview(as: .systemSmall) {
+#Preview(as: .systemMedium) {
     ctaTimes()
 } timeline: {
     SimpleEntry(date: .now, configuration: .init(), hasCache: false, arrivalsCount: 0, lastModified: nil)
