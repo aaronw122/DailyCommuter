@@ -11,7 +11,7 @@ import SwiftUI
 @main
 struct ctaTimesBundle: WidgetBundle {
     var body: some Widget {
-        CtaTimesWidget()
+        ctaTimes()
         ctaTimesControl()
         ctaTimesLiveActivity()
     }
