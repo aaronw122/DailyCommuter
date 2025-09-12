@@ -147,11 +147,17 @@ struct ctaTimesEntryView: View {
                 .lineLimit(1)
 
             if let favorite = entry.configuration.favorite {
-                Text("Favorite: \(favorite.name)")
-                    .font(.footnote)
-                    .lineLimit(1)
+                if favorite.id == FavoriteEntity.all.id {
+                    Text("Favorite: All")
+                        .font(.footnote)
+                        .lineLimit(1)
+                } else {
+                    Text("Favorite: \(favorite.name)")
+                        .font(.footnote)
+                        .lineLimit(1)
+                }
             } else {
-                Text("Favorite: All")
+                Text("Favorite: —")
                     .font(.footnote)
                     .lineLimit(1)
             }
