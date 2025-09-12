@@ -2,7 +2,7 @@
 //  FavoriteSelectionIntent.swift
 //  DailyCommuter
 //
-//  Created by Aaron Williams on 8/23/25.
+//  Created by Codex on 9/10/25.
 //
 
 import AppIntents
@@ -51,7 +51,7 @@ struct FavoritesQuery: EntityQuery {
     func defaultResult() -> FavoriteEntity? { nil }
 }
 
-// MARK: - Widget configuration intent
+// MARK: - Widget configuration intent using an entity picker
 struct FavoriteSelectionIntent: WidgetConfigurationIntent {
     static var title: LocalizedStringResource { "Select Favorite" }
     static var description: IntentDescription { "Choose which favorite this widget displays." }
@@ -59,7 +59,10 @@ struct FavoriteSelectionIntent: WidgetConfigurationIntent {
     @Parameter(title: "Favorite", requestValueDialog: "Choose a favorite to show in the widget")
     var favorite: FavoriteEntity?
 
+    init() {}
+
     static var parameterSummary: some ParameterSummary {
         Summary("Show: \(\.$favorite)")
     }
 }
+
