@@ -16,6 +16,7 @@ struct TimesEntry: TimelineEntry {
     let configuration: FavoriteSelectionIntent
     let arrivals: [Arrival]
     let lastUpdated: Date?
+    let favorite: Favorite?
 }
 
 struct TimesProvider: AppIntentTimelineProvider {
@@ -26,7 +27,8 @@ struct TimesProvider: AppIntentTimelineProvider {
         Entry(date: Date(),
               configuration: FavoriteSelectionIntent(),
               arrivals: [],
-              lastUpdated: nil)
+              lastUpdated: nil,
+              favorite: nil)
     }
 
     func snapshot(for configuration: Intent, in context: Context) async -> Entry {
@@ -45,6 +47,7 @@ struct TimesProvider: AppIntentTimelineProvider {
         let now = Date()
         let favoriteID = configuration.favorite?.id
         let (allArrivals, modified) = readCachedArrivals()
+        let favoriteMeta = readFavorite(id: favoriteID)
         let filtered: [Arrival]
         // Require explicit selection: if no favorite selected, show nothing and prompt in the view.
         if let id = favoriteID, !id.isEmpty {
@@ -52,7 +55,11 @@ struct TimesProvider: AppIntentTimelineProvider {
         } else {
             filtered = []
         }
-        return Entry(date: now, configuration: configuration, arrivals: filtered, lastUpdated: modified)
+        return Entry(date: now,
+                     configuration: configuration,
+                     arrivals: filtered,
+                     lastUpdated: modified,
+                     favorite: favoriteMeta)
     }
 
     private func readCachedArrivals() -> ([Arrival], Date?) {
@@ -70,5 +77,13 @@ struct TimesProvider: AppIntentTimelineProvider {
             modified = values.contentModificationDate
         }
         return (arrivals, modified)
+    }
+
+    private func readFavorite(id: String?) -> Favorite? {
+        guard let id, !id.isEmpty else { return nil }
+        let store = SharedStore(groupID: appGroupID)
+        let dtos = store.loadFavoritesDTO()
+        let favs = [Favorite].fromDTOs(dtos)
+        return favs.first { $0.id == id }
     }
 }

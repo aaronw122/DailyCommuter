@@ -9,3 +9,4 @@ android/
 .expo/
 .idea/
 node_modules/
+ios/AGENTS.md

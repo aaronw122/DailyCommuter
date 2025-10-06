@@ -10,7 +10,7 @@ import Foundation
 
 // MARK: - AppEntity representing a Favorite from the shared store
 struct FavoriteEntity: AppEntity, Identifiable {
-    static var typeDisplayRepresentation = TypeDisplayRepresentation(name: "Favorite")
+    static var typeDisplayRepresentation = TypeDisplayRepresentation(name: "Select Favorite")
 
     static var defaultQuery = FavoritesQuery()
 
@@ -47,7 +47,7 @@ struct FavoritesQuery: EntityQuery {
         let filtered = favs.filter { $0.name.localizedCaseInsensitiveContains(query) }
         return filtered.map { FavoriteEntity(id: $0.id, name: $0.name) }
     }
-    
+
     func defaultResult() -> FavoriteEntity? { nil }
 }
 
@@ -56,13 +56,13 @@ struct FavoriteSelectionIntent: WidgetConfigurationIntent {
     static var title: LocalizedStringResource { "Select Favorite" }
     static var description: IntentDescription { "Choose which favorite this widget displays." }
 
-    @Parameter(title: "Favorite", requestValueDialog: "Choose a favorite to show in the widget")
+    @Parameter(title: "Select Favorite", requestValueDialog: "Choose a favorite to show in the widget")
     var favorite: FavoriteEntity?
 
     init() {}
 
     static var parameterSummary: some ParameterSummary {
-        Summary("Show: \(\.$favorite)")
+        // Use closure-based initializer to avoid inference issues with string interpolation.
+        Summary { \.$favorite }
     }
 }
-
