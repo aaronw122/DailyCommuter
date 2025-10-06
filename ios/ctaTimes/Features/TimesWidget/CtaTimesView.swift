@@ -58,6 +58,7 @@ struct CtaTimesView: View {
                     Text("Last refreshed: \(timeString(from: last))")
                         .font(.caption2)
                         .foregroundStyle(.secondary)
+                        .frame(maxWidth: .infinity, alignment: .trailing)
                 }
             }
             .background(
@@ -74,7 +75,7 @@ struct CtaTimesView: View {
 private extension CtaTimesView {
     var header: some View {
         HStack(spacing: 8) {
-            Image(systemName: "mappin.and.ellipse")
+            Image(systemName: "mappin.circle")
                 .imageScale(.medium)
                 .foregroundColor(Color(red: 0/255, green: 0/255, blue: 0/255, opacity: 1.0))
             Text(entry.configuration.favorite?.name ?? entry.favorite?.name ?? "Favorite")
@@ -91,12 +92,14 @@ private extension CtaTimesView {
     }
 
     func row(for stop: StopArrival) -> some View {
-        HStack(alignment: .firstTextBaseline, spacing: 20) {
+        HStack(alignment: .firstTextBaseline, spacing: 4) {
             // Icon per mode
             let kind = kindForStop(id: stop.stopId)
             Image(systemName: kind == .bus ? "bus.fill" : "tram.fill")
                 .foregroundStyle(kind == .bus ? .green : .blue)
-                .imageScale(.medium)
+                .font(.system(size: 16, weight: .regular))      // lock size to a point value
+                .scaleEffect(kind == .train ? 1.12 : 1.0)         // tram needs a little boost
+                .frame(width: 18, height: 18, alignment: .center)
 
             // Route name + destination
           HStack(spacing: 10){
@@ -113,13 +116,20 @@ private extension CtaTimesView {
           }
           Spacer(minLength:4)
 
-            // Up to 3 arrival times
-            let times = stop.time.prefix(3).map { $0.time }.joined(separator: ", ")
-            Text(times)
-                .font(.headline.weight(.semibold))
-                .monospacedDigit()
-                .lineLimit(1)
-                .foregroundColor(Color(red: 0/255, green: 0/255, blue: 0/255, opacity: 0.7))
+            // Up to 3 arrival times; handle "No service" special message
+            if hasNoServiceMessage(stop.time) {
+                Text("No service")
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+                    .lineLimit(1)
+            } else {
+                let times = stop.time.prefix(3).map { $0.time }.joined(separator: ", ")
+                Text(times)
+                    .font(.headline.weight(.semibold))
+                    .monospacedDigit()
+                    .lineLimit(1)
+                    .foregroundColor(Color(red: 0/255, green: 0/255, blue: 0/255, opacity: 0.7))
+            }
         }
         .accessibilityElement(children: .combine)
     }
@@ -161,6 +171,14 @@ private extension CtaTimesView {
         df.dateFormat = "h:mma"
         let str = df.string(from: date)
         return str.lowercased()
+    }
+
+    // MARK: - Times helpers
+    func hasNoServiceMessage(_ times: [TimeInfo]) -> Bool {
+        times.contains { t in
+            t.time.trimmingCharacters(in: .whitespacesAndNewlines)
+                .localizedCaseInsensitiveCompare("No service is scheduled at this time") == .orderedSame
+        }
     }
 
     // MARK: - Ordering and limits
