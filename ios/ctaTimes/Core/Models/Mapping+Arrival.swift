@@ -81,6 +81,19 @@ public extension Array where Element == Arrival {
         return fromCachedPayload(data, maxAge: maxAge, now: now)
     }
 
+    /// Load cached arrivals and include the embedded fetchedAt timestamp.
+    /// Returns nil if missing or stale.
+    static func loadFromWithTimestamp(url: URL,
+                                      maxAge: TimeInterval = ArrivalCacheTTL.maxAge,
+                                      now: Date = .now) -> (arrivals: [Arrival], fetchedAt: Date)? {
+        guard let data = try? Data(contentsOf: url) else { return nil }
+        let dec = JSONDecoder()
+        dec.dateDecodingStrategy = .iso8601
+        guard let payload = try? dec.decode(CachedArrivals.self, from: data) else { return nil }
+        guard now.timeIntervalSince(payload.fetchedAt) <= maxAge else { return nil }
+        return (payload.arrivals, payload.fetchedAt)
+    }
+
     /// Convenience: Save arrivals atomically to a file URL with timestamp.
     func save(to url: URL, now: Date = .now) {
         guard let data = toCachedPayload(now: now) else { return }
@@ -101,10 +114,4 @@ public extension Array where Element == Arrival {
     }
 }
 
-public extension Array where Element == Arrival {
-    /// Suggested next widget reload:
-    /// Always refresh 5 minutes from now.
-    func suggestedRefresh(from now: Date) -> Date {
-        return now.addingTimeInterval(5 * 60)
-    }
-}
+// Refresh policy moved to Core/Utilities/Arrivals+Refresh.swift

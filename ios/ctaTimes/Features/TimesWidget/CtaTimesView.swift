@@ -7,6 +7,7 @@
 
 import SwiftUI
 import WidgetKit
+import AppIntents
 
 struct CtaTimesView: View {
     let entry: TimesEntry
@@ -75,7 +76,7 @@ struct CtaTimesView: View {
 private extension CtaTimesView {
     var header: some View {
         HStack(spacing: 8) {
-            Image(systemName: "mappin.circle")
+            Image(systemName: "mappin")
                 .imageScale(.medium)
                 .foregroundColor(Color(red: 0/255, green: 0/255, blue: 0/255, opacity: 1.0))
             Text(entry.configuration.favorite?.name ?? entry.favorite?.name ?? "Favorite")
@@ -84,11 +85,13 @@ private extension CtaTimesView {
                 .foregroundStyle(.primary)
                 .foregroundColor(Color(red: 0/255, green: 0/255, blue: 0/255, opacity: 1.0))
             Spacer()
-            Image(systemName: "arrow.clockwise")
-                .imageScale(.medium)
-                .foregroundStyle(.secondary)
-                .foregroundColor(Color(red: 0/255, green: 0/255, blue: 0/255, opacity: 1.0))
-        }
+            Button(intent: RefreshTimesIntent()) {
+                Image(systemName: "arrow.clockwise")
+                    .imageScale(.medium)
+            }
+            .buttonStyle(.plain)
+            .tint(.secondary)
+    }
     }
 
     func row(for stop: StopArrival) -> some View {

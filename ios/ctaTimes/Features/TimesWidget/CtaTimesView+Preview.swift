@@ -1,6 +1,7 @@
 #if DEBUG
 import SwiftUI
 import WidgetKit
+import AppIntents
 
 // MARK: - Preview Fixtures (no I/O)
 private extension Favorite {

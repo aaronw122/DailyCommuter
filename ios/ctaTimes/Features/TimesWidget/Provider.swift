@@ -23,8 +23,27 @@ struct TimesProvider: AppIntentTimelineProvider {
     typealias Entry = TimesEntry
     typealias Intent = FavoriteSelectionIntent
 
+#if DEBUG
+    private func log(_ items: Any...) {
+        let msg = items.map { String(describing: $0) }.joined(separator: " ")
+        print("[TimesProvider]", msg)
+    }
+    private static let df: DateFormatter = {
+        let df = DateFormatter()
+        df.dateFormat = "yyyy-MM-dd HH:mm:ss"
+        return df
+    }()
+    private func ts(_ date: Date?) -> String {
+        guard let d = date else { return "nil" }
+        return Self.df.string(from: d)
+    }
+#endif
+
     func placeholder(in context: Context) -> Entry {
-        Entry(date: Date(),
+#if DEBUG
+        log("placeholder(in:)")
+#endif
+        return Entry(date: Date(),
               configuration: FavoriteSelectionIntent(),
               arrivals: [],
               lastUpdated: nil,
@@ -32,13 +51,22 @@ struct TimesProvider: AppIntentTimelineProvider {
     }
 
     func snapshot(for configuration: Intent, in context: Context) async -> Entry {
-        await loadEntry(configuration: configuration)
+#if DEBUG
+        log("snapshot(for:) favorite=", configuration.favorite?.id ?? "nil")  
+#endif
+        return await loadEntry(configuration: configuration)
     }
 
     func timeline(for configuration: Intent, in context: Context) async -> Timeline<Entry> {
         let entry = await loadEntry(configuration: configuration)
-        // Skeleton refresh policy: use helper; currently 5 minutes.
-        let next = entry.arrivals.suggestedRefresh(from: entry.date)
+        let next = entry.arrivals.suggestedRefresh(from: entry.date, lastUpdated: entry.lastUpdated)
+#if DEBUG
+        log("timeline(for:) favorite=", configuration.favorite?.id ?? "nil",
+            "arrivals:", entry.arrivals.count,
+            "now:", ts(Date()),
+            "lastUpdated:", ts(entry.lastUpdated),
+            "next:", ts(next))
+#endif
         return Timeline(entries: [entry], policy: .after(next))
     }
 
@@ -55,11 +83,16 @@ struct TimesProvider: AppIntentTimelineProvider {
         } else {
             filtered = []
         }
-        return Entry(date: now,
+        let entry = Entry(date: now,
                      configuration: configuration,
                      arrivals: filtered,
                      lastUpdated: modified,
                      favorite: favoriteMeta)
+        #if DEBUG
+        log("loadEntry:", "favoriteID=", favoriteID ?? "nil",
+            "filtered=", filtered.count, "cachedModified=", ts(modified))
+        #endif
+        return entry
     }
 
     private func readCachedArrivals() -> ([Arrival], Date?) {
@@ -69,13 +102,14 @@ struct TimesProvider: AppIntentTimelineProvider {
             return ([], nil)
         }
 
-        // Decode only if fresh (Mapping+Arrival handles TTL + payload shape)
-        let arrivals = [Arrival].loadFrom(url: url) ?? []
-
-        var modified: Date?
-        if let values = try? url.resourceValues(forKeys: [.contentModificationDateKey]) {
-            modified = values.contentModificationDate
-        }
+        // Prefer embedded fetchedAt timestamp from cache payload.
+        // Fall back to arrivals-only decode if needed.
+        let decodedWithTS = [Arrival].loadFromWithTimestamp(url: url)
+        let arrivals = decodedWithTS?.arrivals ?? ([Arrival].loadFrom(url: url) ?? [])
+        let modified = decodedWithTS?.fetchedAt
+        #if DEBUG
+        log("readCachedArrivals:", "count=", arrivals.count, "modified=", ts(modified))
+        #endif
         return (arrivals, modified)
     }
 
