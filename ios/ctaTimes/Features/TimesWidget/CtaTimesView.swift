@@ -32,6 +32,8 @@ struct CtaTimesView: View {
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
+        } else if showsAllFavorites {
+            allFavoritesContent
         } else if entry.arrivals.isEmpty {
             VStack(alignment: .leading, spacing: 6) {
                 Text("You’re offline, connect to internet to see times.")
@@ -39,20 +41,41 @@ struct CtaTimesView: View {
                     .foregroundStyle(.secondary)
             }
         } else {
-            // Card with header + rows + footer
-            // Order by the Favorite's stop order; then cap rows by widget family.
-            let allStops = entry.arrivals.flatMap { $0.stops }
-            let ordered = orderedStops(from: allStops)
+            singleFavoriteContent
+        }
+    }
+}
+
+// MARK: - Subviews
+
+private extension CtaTimesView {
+    var showsAllFavorites: Bool {
+        entry.configuration.favorite?.id == FavoriteEntity.all.id
+    }
+
+    var primaryFavorite: Favorite? {
+        entry.favorite ?? entry.favorites.first
+    }
+
+    @ViewBuilder
+    var singleFavoriteContent: some View {
+        if let favorite = primaryFavorite {
+            let arrivalStops = entry.arrivals.first(where: { $0.favoriteID == favorite.id })?.stops
+                ?? entry.arrivals.first?.stops
+                ?? []
+            let ordered = orderedStops(for: favorite, incoming: arrivalStops)
             let limit = maxRowsForCurrentFamily()
             let displayStops = Array(ordered.prefix(limit))
+
             VStack(alignment: .leading, spacing: 12) {
-                header
+                header(for: favorite)
                 Divider()
-                .overlay(Color(red: 223/255, green: 224/255, blue: 228/255).opacity(1))
+                    .overlay(Color(red: 223/255, green: 224/255, blue: 228/255).opacity(1))
                 ForEach(Array(displayStops.enumerated()), id: \.element.id) { index, stop in
-                    row(for: stop)
+                    row(for: stop, favorite: favorite)
                     if index < displayStops.count - 1 {
-                        Divider().overlay(Color(red: 223/255, green: 224/255, blue: 228/255).opacity(1))
+                        Divider()
+                            .overlay(Color(red: 223/255, green: 224/255, blue: 228/255).opacity(1))
                     }
                 }
                 if let last = entry.lastUpdated {
@@ -67,19 +90,64 @@ struct CtaTimesView: View {
                     .fill(Color.white)
             )
             .padding(EdgeInsets(top: 3, leading: 5, bottom: 3, trailing: 5))
+        } else {
+            VStack(alignment: .leading, spacing: 6) {
+                Text("Save a favorite in the Daily Commuter app to show arrivals here.")
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+            }
         }
     }
-}
 
-// MARK: - Subviews
+    @ViewBuilder
+    var allFavoritesContent: some View {
+        let limit = family == .systemLarge ? 4 : 2
+        let favorites = entry.favorites.prefix(limit)
+        if favorites.isEmpty {
+            VStack(alignment: .leading, spacing: 6) {
+                Text("Save favorites in the Daily Commuter app to show them here.")
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+            }
+        } else {
+            VStack(alignment: .leading, spacing: 10) {
+                HStack(spacing: 8) {
+                    Image(systemName: "square.grid.2x2")
+                        .imageScale(.medium)
+                        .foregroundColor(Color(red: 0/255, green: 0/255, blue: 0/255, opacity: 1.0))
+                    Text("All Favorites")
+                        .font(.headline)
+                        .foregroundStyle(.primary)
+                    Spacer()
+                    Button(intent: RefreshTimesIntent()) {
+                        Image(systemName: "arrow.clockwise")
+                            .imageScale(.medium)
+                    }
+                    .buttonStyle(.plain)
+                    .tint(.secondary)
+                }
 
-private extension CtaTimesView {
-    var header: some View {
+                ForEach(favorites, id: \.id) { favorite in
+                    let arrival = entry.arrivals.first(where: { $0.favoriteID == favorite.id })
+                    favoriteCard(for: favorite, arrival: arrival)
+                }
+                if let last = entry.lastUpdated {
+                    Text("Last refreshed: \(timeString(from: last))")
+                        .font(.caption2)
+                        .foregroundStyle(.secondary)
+                        .frame(maxWidth: .infinity, alignment: .trailing)
+                }
+            }
+            .padding(EdgeInsets(top: 3, leading: 5, bottom: 3, trailing: 5))
+        }
+    }
+
+    func header(for favorite: Favorite?) -> some View {
         HStack(spacing: 8) {
             Image(systemName: "mappin")
                 .imageScale(.medium)
                 .foregroundColor(Color(red: 0/255, green: 0/255, blue: 0/255, opacity: 1.0))
-            Text(entry.configuration.favorite?.name ?? entry.favorite?.name ?? "Favorite")
+            Text(entry.configuration.favorite?.name ?? favorite?.name ?? "Favorite")
                 .font(.headline)
                 .lineLimit(1)
                 .foregroundStyle(.primary)
@@ -91,42 +159,72 @@ private extension CtaTimesView {
             }
             .buttonStyle(.plain)
             .tint(.secondary)
-    }
+        }
     }
 
-    func row(for stop: StopArrival) -> some View {
+    func favoriteCard(for favorite: Favorite, arrival: Arrival?) -> some View {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack(spacing: 8) {
+                Image(systemName: "mappin")
+                    .imageScale(.medium)
+                    .foregroundColor(Color(red: 0/255, green: 0/255, blue: 0/255, opacity: 1.0))
+                Text(favorite.name)
+                    .font(.headline)
+                    .lineLimit(1)
+                    .foregroundStyle(.primary)
+                Spacer()
+            }
+
+            if let arrival = arrival, !arrival.stops.isEmpty {
+                let ordered = orderedStops(for: favorite, incoming: arrival.stops)
+                let displayStops = Array(ordered.prefix(1))
+                ForEach(displayStops, id: \.id) { stop in
+                    row(for: stop, favorite: favorite)
+                }
+            } else {
+                Text("Fetching arrivals…")
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+            }
+        }
+        .padding(EdgeInsets(top: 10, leading: 12, bottom: 10, trailing: 12))
+        .background(
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                .fill(Color.white)
+        )
+    }
+
+    func row(for stop: StopArrival, favorite: Favorite?) -> some View {
         HStack(alignment: .firstTextBaseline, spacing: 4) {
-            // Icon per mode
-            let kind = kindForStop(id: stop.stopId)
+            let kind = kindForStop(stop, favorite: favorite)
             Image(systemName: kind == .bus ? "bus.fill" : "tram.fill")
                 .foregroundStyle(kind == .bus ? .green : .blue)
-                .font(.system(size: 16, weight: .regular))      // lock size to a point value
-                .scaleEffect(kind == .train ? 1.12 : 1.0)         // tram needs a little boost
+                .font(.system(size: 16, weight: .regular))
+                .scaleEffect(kind == .train ? 1.12 : 1.0)
                 .frame(width: 18, height: 18, alignment: .center)
 
-            // Route name + destination
-          HStack(spacing: 10){
-            Text(routeDisplayName(for: stop))
-                .font(.headline.weight(.semibold))
-                .lineLimit(1)
-                .minimumScaleFactor(0.8)
-                .foregroundColor(Color(red: 0/255, green: 0/255, blue: 0/255, opacity: 0.7))
-            Text(destination(for: stop))
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
-                .lineLimit(1)
-                .foregroundColor(Color(red: 113/255, green: 113/255, blue: 113/255, opacity: 1.0))
-          }
-          Spacer(minLength:4)
+            HStack(spacing: 10) {
+                Text(routeDisplayName(for: stop, favorite: favorite))
+                    .font(.headline.weight(.semibold))
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.8)
+                    .foregroundColor(Color(red: 0/255, green: 0/255, blue: 0/255, opacity: 0.7))
+                Text(destination(for: stop))
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+                    .lineLimit(1)
+                    .foregroundColor(Color(red: 113/255, green: 113/255, blue: 113/255, opacity: 1.0))
+            }
+            Spacer(minLength: 4)
 
-            // Up to 3 arrival times; handle "No service" special message
             if hasNoServiceMessage(stop.time) {
                 Text("No service")
                     .font(.footnote)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(.primary)
                     .lineLimit(1)
             } else {
-                let times = stop.time.prefix(3).map { $0.time }.joined(separator: ", ")
+                let ageMins = minutesSinceLastUpdate()
+                let times = stop.time.prefix(3).map { displayTime($0, ageMinutes: ageMins) }.joined(separator: ", ")
                 Text(times)
                     .font(.headline.weight(.semibold))
                     .monospacedDigit()
@@ -139,29 +237,25 @@ private extension CtaTimesView {
 
     func destination(for stop: StopArrival) -> String {
         if let dest = stop.time.first?.destination, !dest.isEmpty { return dest }
-        // Fallback: show direction if no destination
         return stop.direction
     }
 
-    func kindForStop(id: String) -> Stop.Kind {
-        guard let fav = entry.favorite else { return .train }
-        return fav.stops.first(where: { $0.stopId == id })?.kind ?? .train
+    func kindForStop(_ stop: StopArrival, favorite: Favorite?) -> Stop.Kind {
+        guard let fav = favorite else { return .train }
+        return fav.stops.first(where: { $0.stopId == stop.stopId })?.kind ?? .train
     }
 
-    func routeDisplayName(for stop: StopArrival) -> String {
-        // Prefer the human-friendly routeName from the user's Favorite stops.
-        if let fav = entry.favorite,
+    func routeDisplayName(for stop: StopArrival, favorite: Favorite?) -> String {
+        if let fav = favorite,
            let matched = fav.stops.first(where: { $0.stopId == stop.stopId }),
            !matched.routeName.isEmpty {
             return firstWord(of: matched.routeName)
         }
-        // Fallback: routeId is already a single token.
         return stop.routeId
     }
 
     func firstWord(of text: String) -> String {
         let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
-        // Find the first whitespace to cut at the first token.
         if let r = trimmed.rangeOfCharacter(from: .whitespacesAndNewlines) {
             return String(trimmed[..<r.lowerBound])
         }
@@ -176,22 +270,41 @@ private extension CtaTimesView {
         return str.lowercased()
     }
 
-    // MARK: - Times helpers
     func hasNoServiceMessage(_ times: [TimeInfo]) -> Bool {
-        times.contains { t in
-            t.time.trimmingCharacters(in: .whitespacesAndNewlines)
-                .localizedCaseInsensitiveCompare("No service is scheduled at this time") == .orderedSame
+        let variants = [
+            "No service is scheduled at this time",
+            "No service available at this time"
+        ]
+        return times.contains { t in
+            let value = t.time.trimmingCharacters(in: .whitespacesAndNewlines)
+            return variants.contains { value.localizedCaseInsensitiveCompare($0) == .orderedSame }
         }
     }
 
-    // MARK: - Ordering and limits
-    func orderedStops(from incoming: [StopArrival]) -> [StopArrival] {
-        guard let fav = entry.favorite else { return incoming }
+    func minutesSinceLastUpdate() -> Int {
+        guard let last = entry.lastUpdated else { return 0 }
+        let delta = entry.date.timeIntervalSince(last)
+        return max(0, Int(delta / 60.0))
+    }
+
+    func displayTime(_ info: TimeInfo, ageMinutes: Int) -> String {
+        let raw = info.time.trimmingCharacters(in: .whitespacesAndNewlines)
+        let upper = raw.uppercased()
+        if upper == "DUE" { return "DUE" }
+        if let n = Int(upper) {
+            let adjusted = max(0, n - ageMinutes)
+            return adjusted == 0 ? "DUE" : String(adjusted)
+        }
+        return raw
+    }
+
+    func orderedStops(for favorite: Favorite?, incoming: [StopArrival]) -> [StopArrival] {
+        guard let fav = favorite else { return incoming }
         let order = fav.stops.map { $0.stopId }
         let indexById = Dictionary(uniqueKeysWithValues: order.enumerated().map { ($1, $0) })
         return incoming
             .filter { indexById[$0.stopId] != nil }
-            .sorted { (lhs, rhs) in
+            .sorted { lhs, rhs in
                 (indexById[lhs.stopId] ?? Int.max) < (indexById[rhs.stopId] ?? Int.max)
             }
     }
@@ -199,7 +312,7 @@ private extension CtaTimesView {
     func maxRowsForCurrentFamily() -> Int {
         switch family {
         case .systemLarge: return 4
-        default: return 2 // systemMedium and others supported for this widget
+        default: return 2
         }
     }
 }

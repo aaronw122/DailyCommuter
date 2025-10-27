@@ -9,7 +9,7 @@ export interface FavoriteStop {
 export interface Favorite {
     id: string;           // uuid or timestamp
     name: string;         // e.g. “home”, “work”
-    stops: FavoriteStop[]; // max length 2
+    stops: FavoriteStop[]; // max length 4
 }
 
 export interface SimpleDirection {

@@ -9,26 +9,33 @@ type checkProps = {
     stops: number;
     onPress: () => void;
     isSelected: boolean;
+    isDisabled?: boolean;
 }
 
-export default function Checkbox({name, stops, isSelected, onPress}:checkProps) {
+export default function Checkbox({name, stops, isSelected, onPress, isDisabled = false}:checkProps) {
+    const stopsLabel = stops === 1 ? '1 stop' : `${stops} stops`;
+    const accessoryColor = isDisabled ? '#C7C7C8' : '#000000';
     return (
         <Pressable
             onPress={onPress}
-            style={styles.container}
+            disabled={isDisabled}
+            style={({pressed}) => [
+                styles.container,
+                pressed && !isDisabled && styles.pressed
+            ]}
+            accessibilityState={{ disabled: isDisabled, selected: isSelected }}
         >
 
             <View style={styles.selectorContent}>
                 <View style={styles.strings}>
                     <Text style={styles.title}> {name} </Text>
-                    {stops === 1 ?
-                        <Text style={styles.subtext}> {stops} {"stop"} </Text>
-                        :
-                        <Text style={styles.subtext}> {stops} {"stops"} </Text>}
+                    <Text style={styles.subtext}> {stopsLabel}{isDisabled ? ' (full)' : ''} </Text>
                 </View>
-                <MaterialIcons name={isSelected ? "check-box": "check-box-outline-blank"}
-                               size={26}
-                               color='#000000'/>
+                <MaterialIcons
+                    name={isSelected ? "check-box": "check-box-outline-blank"}
+                    size={26}
+                    color={accessoryColor}
+                />
             </View>
 
         </Pressable>
@@ -47,6 +54,9 @@ const styles = StyleSheet.create({
         paddingBottom: 10,
         borderBottomWidth: 1,
         borderBottomColor: "#DFE0E4",
+    },
+    pressed: {
+        opacity: 0.65,
     },
     title:{
         marginBottom: 5,

@@ -1,10 +1,12 @@
 import React, {useState} from 'react'
-import {View, StyleSheet, Text} from 'react-native'
+import {View, StyleSheet} from 'react-native'
 import CtaButton from "@/components/cta";
 import {GestureHandlerRootView} from "react-native-gesture-handler";
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import {useFavorites} from "@/app/contexts/favoritesContext";
 import Checkbox from '@/components/checkbox'
+
+const MAX_FAVORITE_STOPS = 4;
 
 export default function SaveFavorite() {
     const router = useRouter();
@@ -18,7 +20,8 @@ export default function SaveFavorite() {
     const {favorites, dispatch} = useFavorites();
     const [selectedFavorite, setSelectedFavorite] = useState<string | null>(null);
 
-    const handleToggle = (name: string) => {
+    const handleToggle = (name: string, isFull: boolean) => {
+        if (isFull) return;
         setSelectedFavorite(prev => (prev === name ? null : name));
         // once you know `name`, you can also pull in your stopData and save it here
     };
@@ -28,7 +31,8 @@ export default function SaveFavorite() {
     const handleUpdate = () => {
         const favorite = favorites.find(fav => fav.name === selectedFavorite);
 
-        if(!favorite) return;
+        if (!favorite) return;
+        if (favorite.stops.length >= MAX_FAVORITE_STOPS) return;
 
         dispatch({
             type: 'update',
@@ -63,17 +67,21 @@ export default function SaveFavorite() {
                     />
                 </View>
                 <View style={{ width: '100%', alignItems: 'center' }}>
-                    {favorites.map(fav => (
-                        <Checkbox key={fav.id}
-                                  name={fav.name}
-                                  stops={fav.stops.length}
-                                  isSelected={selectedFavorite === fav.name}
-                                  onPress={()=>{
-                                      console.log('clicked',fav.id);
-                                      handleToggle(fav.name);
-                                  }}
-                        />
-                    ))}
+                    {favorites.map(fav => {
+                        const isFull = fav.stops.length >= MAX_FAVORITE_STOPS;
+                        return (
+                            <Checkbox key={fav.id}
+                                      name={fav.name}
+                                      stops={fav.stops.length}
+                                      isSelected={!isFull && selectedFavorite === fav.name}
+                                      isDisabled={isFull}
+                                      onPress={()=>{
+                                          console.log('clicked',fav.id);
+                                          handleToggle(fav.name, isFull);
+                                      }}
+                            />
+                        );
+                    })}
                 </View>
             </View>
             <View style={{ width: '100%', paddingHorizontal: 25, alignItems: 'center', marginBottom: 45}}>

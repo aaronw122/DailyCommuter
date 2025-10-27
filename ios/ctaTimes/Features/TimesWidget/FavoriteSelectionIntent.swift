@@ -8,6 +8,8 @@
 import AppIntents
 import Foundation
 
+private let appGroupID = "group.com.yourco.dailycommuter"
+
 // MARK: - AppEntity representing a Favorite from the shared store
 struct FavoriteEntity: AppEntity, Identifiable {
     static var typeDisplayRepresentation = TypeDisplayRepresentation(name: "Select Favorite")
@@ -28,23 +30,31 @@ struct FavoriteEntity: AppEntity, Identifiable {
 
 // MARK: - Query provider backed by FavoritesStore (App Group)
 struct FavoritesQuery: EntityQuery {
+    private func loadFavorites() -> [Favorite] {
+        let store = SharedStore(groupID: appGroupID)
+        let dtos = store.loadFavoritesDTO()
+        return [Favorite].fromDTOs(dtos)
+    }
+
     func entities(for identifiers: [FavoriteEntity.ID]) async throws -> [FavoriteEntity] {
-        let favs: [Favorite] = await MainActor.run { FavoritesStore.shared.favorites }
-        return favs
+        let favorites = loadFavorites()
+        return favorites
             .filter { identifiers.contains($0.id) }
             .map { FavoriteEntity(id: $0.id, name: $0.name) }
     }
 
     func suggestedEntities() async throws -> [FavoriteEntity] {
-        let favs: [Favorite] = await MainActor.run { FavoritesStore.shared.favorites }
-        let mapped = favs.map { FavoriteEntity(id: $0.id, name: $0.name) }
+        let favorites = loadFavorites()
+        let mapped = favorites.map { FavoriteEntity(id: $0.id, name: $0.name) }
+
+        guard !mapped.isEmpty else { return [] }
         // Put a fast, concise set in the gallery picker. Include a synthetic "All" option first.
         return [FavoriteEntity.all] + Array(mapped.prefix(8))
     }
 
     func entities(matching query: String) async throws -> [FavoriteEntity] {
-        let favs: [Favorite] = await MainActor.run { FavoritesStore.shared.favorites }
-        let filtered = favs.filter { $0.name.localizedCaseInsensitiveContains(query) }
+        let favorites = loadFavorites()
+        let filtered = favorites.filter { $0.name.localizedCaseInsensitiveContains(query) }
         return filtered.map { FavoriteEntity(id: $0.id, name: $0.name) }
     }
 

@@ -34,6 +34,7 @@ public struct SharedStore {
 
     private let encoder: JSONEncoder
     private let decoder: JSONDecoder
+    private let favoritesDefaultsKey = "favorites"
 
     // MARK: - Init
 
@@ -59,7 +60,54 @@ public struct SharedStore {
 
     /// Loads favorites as DTOs (what RN writes). Returns empty array if file is missing or invalid.
     public func loadFavoritesDTO() -> [FavoriteDTO] {
-        (try? read([FavoriteDTO].self, from: .favorites)) ?? []
+        if let dtos: [FavoriteDTO] = try? read([FavoriteDTO].self, from: .favorites) {
+            return dtos
+        }
+
+        // Fallback for legacy payloads that stored the domain `Favorite` type.
+        if let favorites: [Favorite] = try? read([Favorite].self, from: .favorites) {
+            return favorites.map { favorite in
+                let stops = favorite.stops.map { stop in
+                    FavoriteStopDTO(
+                        routeId: stop.routeId,
+                        routeName: stop.routeName,
+                        stopId: stop.stopId,
+                        stopName: stop.stopName,
+                        direction: stop.direction,
+                        type: stop.kind.rawValue
+                    )
+                }
+                return FavoriteDTO(id: favorite.id, name: favorite.name, stops: stops)
+            }
+        }
+
+        // Fallback: check shared UserDefaults in case the JSON file has not been created yet.
+        if
+            let suite = UserDefaults(suiteName: groupID),
+            let data = suite.data(forKey: favoritesDefaultsKey)
+        {
+            if let dtos = try? decoder.decode([FavoriteDTO].self, from: data) {
+                return dtos
+            }
+
+            if let favorites = try? decoder.decode([Favorite].self, from: data) {
+                return favorites.map { favorite in
+                    let stops = favorite.stops.map { stop in
+                        FavoriteStopDTO(
+                            routeId: stop.routeId,
+                            routeName: stop.routeName,
+                            stopId: stop.stopId,
+                            stopName: stop.stopName,
+                            direction: stop.direction,
+                            type: stop.kind.rawValue
+                        )
+                    }
+                    return FavoriteDTO(id: favorite.id, name: favorite.name, stops: stops)
+                }
+            }
+        }
+
+        return []
     }
 
     /// Atomically saves favorites DTOs.

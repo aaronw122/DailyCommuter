@@ -58,7 +58,8 @@ private extension TimesEntry {
             configuration: config(for: fav),
             arrivals: arrivals,
             lastUpdated: Date(),
-            favorite: fav
+            favorite: fav,
+            favorites: [fav]
         )
     }
 
@@ -69,7 +70,8 @@ private extension TimesEntry {
             configuration: config(for: fav),
             arrivals: [],
             lastUpdated: Date(),
-            favorite: fav
+            favorite: fav,
+            favorites: [fav]
         )
     }
 
@@ -80,7 +82,8 @@ private extension TimesEntry {
             configuration: config(for: fav),
             arrivals: [],
             lastUpdated: nil, // no timestamp to imply stale/offline
-            favorite: fav
+            favorite: fav,
+            favorites: [fav]
         )
     }
 }

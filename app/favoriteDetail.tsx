@@ -1,5 +1,5 @@
 import React, {useLayoutEffect} from 'react'
-import { View, StyleSheet } from 'react-native'
+import { ScrollView, StyleSheet } from 'react-native'
 import StopCard from "@/components/stopCard";
 import {useLocalSearchParams, useNavigation} from 'expo-router';
 import {useFavorites} from "@/app/contexts/favoritesContext";
@@ -79,20 +79,22 @@ export default function FavoriteDetail() {
 
 
     return (
-        <View style= {styles.container}>
-            <View style = {{paddingTop: 25}}>
-                {favStops.map((routeObj, idx)=> {
-                    const {data: times = [], isLoading, isError} = timeQueries[idx] ?? {};
-                    return (
-                        <StopCard key={routeObj.stopId}
-                                  times={times}
-                                  header={routeObj.routeName.split(/\s+/)[0]}
-                                  subheader={routeObj.direction}
-                                  stop={routeObj.stopName}/>
-                    );
-                })}
-            </View>
-        </View>
+        <ScrollView
+            style={styles.container}
+            contentContainerStyle={styles.contentContainer}
+            showsVerticalScrollIndicator={false}
+        >
+            {favStops.map((routeObj, idx)=> {
+                const {data: times = [], isLoading, isError} = timeQueries[idx] ?? {};
+                return (
+                    <StopCard key={routeObj.stopId}
+                              times={times}
+                              header={routeObj.routeName.split(/\s+/)[0]}
+                              subheader={routeObj.direction}
+                              stop={routeObj.stopName}/>
+                );
+            })}
+        </ScrollView>
     )
 }
 
@@ -103,6 +105,10 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#ffffff',
+    },
+    contentContainer: {
+        paddingTop: 25,
+        paddingBottom: 32,
         alignItems: 'center',
     },
     center: {
