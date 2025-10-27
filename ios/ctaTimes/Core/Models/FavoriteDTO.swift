@@ -64,5 +64,5 @@ public struct FavoriteStopDTO: Codable, Equatable, Sendable {
 public struct FavoriteDTO: Codable, Equatable, Sendable {
     public let id: String
     public let name: String
-    public let stops: [FavoriteStopDTO] // max 2; enforced by RN
+    public let stops: [FavoriteStopDTO] // max 4 after normalization
 }

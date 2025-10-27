@@ -33,7 +33,7 @@ extension Favorite {
     init?(dto: FavoriteDTO) {
         guard !dto.id.isEmpty, !dto.name.isEmpty else { return nil }
 
-        // Map stops, drop invalid, de-dupe by stopId, cap at 2
+        // Map stops, drop invalid, de-dupe by stopId, cap at 4
         var seen = Set<String>()
         let normalized: [Stop] = dto.stops.compactMap { Stop(dto: $0) }.filter { stop in
             if seen.contains(stop.stopId) { return false }
@@ -41,7 +41,7 @@ extension Favorite {
             return true
         }
 
-        let trimmed = Array(normalized.prefix(2))
+        let trimmed = Array(normalized.prefix(4))
         guard !trimmed.isEmpty else { return nil }
 
         self = Favorite(id: dto.id, name: dto.name, stops: trimmed)

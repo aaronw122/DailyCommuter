@@ -21,6 +21,6 @@ public struct Stop: Codable, Hashable, Sendable {
 public struct Favorite: Codable, Identifiable, Hashable, Sendable {
     public let id: String
     public let name: String
-    /// Up to 2 stops; order preserved from source after normalization/dedup.
+    /// Up to 4 stops; order preserved from source after normalization/dedup.
     public let stops: [Stop]
 }
