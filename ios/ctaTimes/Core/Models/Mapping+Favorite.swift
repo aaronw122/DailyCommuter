@@ -27,6 +27,7 @@ extension Stop {
     }
 }
 
+
 // MARK: - FavoriteDTO -> Favorite
 
 extension Favorite {
@@ -41,7 +42,7 @@ extension Favorite {
             return true
         }
 
-        let trimmed = Array(normalized.prefix(2))
+        let trimmed = Array(normalized.prefix(4))
         guard !trimmed.isEmpty else { return nil }
 
         self = Favorite(id: dto.id, name: dto.name, stops: trimmed)
