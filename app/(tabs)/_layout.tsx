@@ -3,8 +3,10 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import {
+    Animated,
+    Dimensions,
     Modal,
     Pressable,
     StyleSheet,
@@ -20,8 +22,11 @@ export default function TabLayout() {
         focused: boolean;
     };
 
-    const [showOnboarding, setShowOnboarding] = useState(false);
+    const [isBackdropVisible, setIsBackdropVisible] = useState(false);
     const router = useRouter();
+    const sheetTranslateY = useRef(new Animated.Value(1)).current;
+    const windowHeight = useRef(Dimensions.get('window').height).current;
+    const sheetHiddenOffset = windowHeight * 0.55;
 
     useEffect(() => {
         let isMounted = true;
@@ -30,11 +35,11 @@ export default function TabLayout() {
             try {
                 const hasSeen = await AsyncStorage.getItem('hasSeenOnboarding');
                 if (isMounted && !hasSeen) {
-                    setShowOnboarding(true);
+                    setIsBackdropVisible(true);
                 }
             } catch {
                 if (isMounted) {
-                    setShowOnboarding(true);
+                    setIsBackdropVisible(true);
                 }
             }
         };
@@ -46,35 +51,72 @@ export default function TabLayout() {
         };
     }, []);
 
-    const closeOnboarding = useCallback(async () => {
-        setShowOnboarding(false);
-        try {
-            await AsyncStorage.setItem('hasSeenOnboarding', 'true');
-        } catch {
-            // Ignore storage errors; the sheet can reappear if saving fails.
+    const animateSheetIn = useCallback(() => {
+        sheetTranslateY.setValue(1);
+        requestAnimationFrame(() => {
+            Animated.timing(sheetTranslateY, {
+                toValue: 0,
+                duration: 260,
+                useNativeDriver: true,
+            }).start();
+        });
+    }, [sheetTranslateY]);
+
+    useEffect(() => {
+        if (isBackdropVisible) {
+            animateSheetIn();
         }
-    }, []);
+    }, [animateSheetIn, isBackdropVisible]);
+
+    const closeOnboarding = useCallback(() => {
+        Animated.timing(sheetTranslateY, {
+            toValue: 1,
+            duration: 220,
+            useNativeDriver: true,
+        }).start(() => {
+            setIsBackdropVisible(false);
+        });
+
+        AsyncStorage.setItem('hasSeenOnboarding', 'true').catch(() => {
+            // Ignore storage errors; the sheet can reappear if saving fails.
+        });
+    }, [sheetTranslateY]);
 
     const openOnboarding = useCallback(() => {
-        setShowOnboarding(true);
+        setIsBackdropVisible(true);
     }, []);
 
     const steps = [
         'Find your regular bus or train route.',
-        'Add it to a favorite location.',
-        'Add the "Daily Commuter" widget to your Home Screen — pick your favorite to see live times.',
+        'Save it to a favorite location.',
+        'Add the "DailyCommuter" widget to your Home Screen to see live times.',
     ];
 
     return (
         <>
-            <Modal animationType="slide" visible={showOnboarding} transparent>
-                <View style={styles.backdrop}>
-                    <View style={styles.sheet}>
+            <Modal animationType="none" visible={isBackdropVisible} transparent onRequestClose={closeOnboarding}>
+                <Pressable style={styles.backdrop} onPress={closeOnboarding}>
+                    <Animated.View
+                        style={[
+                            styles.sheet,
+                            {
+                                transform: [
+                                    {
+                                        translateY: sheetTranslateY.interpolate({
+                                            inputRange: [0, 1],
+                                            outputRange: [0, sheetHiddenOffset],
+                                            extrapolate: 'clamp',
+                                        }),
+                                    },
+                                ],
+                            },
+                        ]}
+                    >
                         <View style={styles.sheetHeader}>
-                            <Text style={styles.sheetTitle}>Welcome to DailyCommuter</Text>
                             <Pressable hitSlop={8} onPress={closeOnboarding} style={styles.closeButton}>
-                                <Ionicons color="#0B1E2A" name="close" size={20} />
+                                <AntDesign color="#000000" name="close" size={24} />
                             </Pressable>
+                            <Text style={styles.sheetTitle}>Welcome to DailyCommuter!</Text>
                         </View>
                         <View style={styles.stepList}>
                             {steps.map((step, index) => (
@@ -92,8 +134,8 @@ export default function TabLayout() {
                         <Pressable onPress={closeOnboarding} style={styles.primaryButton}>
                             <Text style={styles.primaryButtonText}>Get Started</Text>
                         </Pressable>
-                    </View>
-                </View>
+                    </Animated.View>
+                </Pressable>
             </Modal>
             <Tabs
                 screenOptions={{
@@ -183,31 +225,37 @@ const styles = StyleSheet.create({
         gap: 20,
         height: '50%',
         paddingHorizontal: 28,
-        paddingTop: 32,
+        paddingTop: 20,
         paddingBottom: 36,
         width: '100%',
     },
     sheetHeader: {
         alignItems: 'center',
-        paddingBottom: 8,
+        justifyContent: 'center',
+        flexDirection: 'row',
+        paddingTop: 4,
+        paddingBottom: 16,
         position: 'relative',
+        width: '100%',
     },
     sheetTitle: {
         color: '#0078C1',
-        fontSize: 20,
+        fontSize: 18,
         fontWeight: '700',
+        flex: 1,
         textAlign: 'center',
-        width: '100%',
     },
     closeButton: {
         padding: 4,
         position: 'absolute',
-        right: 0,
-        top: 0,
+        left: 0,
+        top: '50%',
+        transform: [{ translateY: -12 }],
     },
     stepList: {
         flexGrow: 1,
         gap: 20,
+        marginBottom: -10,
     },
     stepRow: {
         flexDirection: 'row',
