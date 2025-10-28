@@ -161,7 +161,7 @@ struct TimesProvider: AppIntentTimelineProvider {
         guard age > 120 else { return } // >2 minutes old
 
 #if DEBUG
-        log("maybeRefreshArrivalsInBackground: triggering fetch; age=", Int(age), "sec")
+        log("maybeRefreshArrivalsInBackground: triggering fetch; age=", age, "sec")
 #endif
         Task.detached(priority: .background) {
             do {
