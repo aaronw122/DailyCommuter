@@ -4,6 +4,7 @@ import WidgetKit
 #endif
 import Foundation
 import Dispatch
+import React
 
 @objc(FavoritesBridge)
 final class FavoritesBridge: NSObject, RCTBridgeModule {
