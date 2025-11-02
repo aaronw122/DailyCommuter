@@ -50,7 +50,9 @@ public extension Array where Element == Arrival {
     /// Policy: clamp(earliest - ageMinutes)*60 - 45s, min 60s, max 15m. If no times, use 5m.
     func suggestedRefresh(from now: Date, lastUpdated: Date? = nil) -> Date {
         guard var minutes = earliestMinutes() else {
-            return now.addingTimeInterval(5 * 60)
+            // When we have no arrivals (e.g. offline), retry quickly so we recover as soon as the
+            // network returns instead of forcing the user to wait several minutes.
+            return now.addingTimeInterval(60)
         }
 
         if let last = lastUpdated {

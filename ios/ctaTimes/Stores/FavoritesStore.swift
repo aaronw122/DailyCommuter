@@ -7,6 +7,8 @@
 
 import Foundation
 import Combine
+import WidgetKit
+import Network
 
 @MainActor
 final class FavoritesStore: ObservableObject {
@@ -18,10 +20,16 @@ final class FavoritesStore: ObservableObject {
     @Published private(set) var favorites: [Favorite] = []
 
     static let shared = FavoritesStore()
+    static let offlineStatusKey = "ctaTimes.offline"
+
     private let suite   = UserDefaults(suiteName: "group.com.yourco.dailycommuter")!
     private let key     = "favorites"
     private let groupID = "group.com.yourco.dailycommuter"
-    private let cacheTTL: TimeInterval = 30 * 60 // 30 minutes
+    private let widgetKind = "CtaTimesWidget"
+    private let cacheTTL: TimeInterval = 5 * 60 // 5 minutes (matches ArrivalCacheTTL)
+    private var pathMonitor: NWPathMonitor?
+    private let monitorQueue = DispatchQueue(label: "FavoritesStore.pathMonitor")
+    private var lastRefreshFailed = false
 
     private init() {
         dcLog("init()")
@@ -29,6 +37,8 @@ final class FavoritesStore: ObservableObject {
         pruneStaleArrivalsCache()
         // Warm the arrivals cache on launch so the widget has data ready
         refreshArrivalsCache()
+        suite.set(false, forKey: Self.offlineStatusKey)
+        startNetworkMonitoring()
     }
   
 // MARK: - Favorites file (App Group)
@@ -114,8 +124,7 @@ final class FavoritesStore: ObservableObject {
         dcLog("pruneStaleArrivalsCache check at \(url.path)")
         if FileManager.default.fileExists(atPath: url.path),
            !isCacheFresh(url: url, now: now) {
-            dcLog("Pruning stale arrivals cache (TTL exceeded)")
-            try? FileManager.default.removeItem(at: url)
+            dcLog("Arrivals cache is stale (TTL exceeded); keeping last payload for fallback UI.")
         }
     }
 
@@ -141,8 +150,17 @@ final class FavoritesStore: ObservableObject {
                 self.dcLog("Network fetch succeeded: wrote arrivals payload")
                 arrivals.save(to: url, now: now)
                 self.dcLog("Wrote arrivals.json at \(url.path)")
+                await MainActor.run {
+                    self.lastRefreshFailed = false
+                    WidgetCenter.shared.reloadTimelines(ofKind: self.widgetKind)
+                    self.suite.set(false, forKey: Self.offlineStatusKey)
+                }
             } catch {
                 self.dcLog("refreshArrivalsCache error: \(error)")
+                await MainActor.run {
+                    self.lastRefreshFailed = true
+                    WidgetCenter.shared.reloadTimelines(ofKind: self.widgetKind)
+                }
             }
         }
     }
@@ -171,5 +189,28 @@ final class FavoritesStore: ObservableObject {
         }
         dcLog("Decoded cached arrivals payload")
         return arrivals
+    }
+
+    private func startNetworkMonitoring() {
+        let monitor = NWPathMonitor()
+        monitor.pathUpdateHandler = { [weak self] path in
+            guard let self else { return }
+            let isOffline = path.status != .satisfied
+            Task { @MainActor in
+                self.suite.set(isOffline, forKey: Self.offlineStatusKey)
+                if isOffline {
+                    self.lastRefreshFailed = true
+                } else if self.lastRefreshFailed {
+                    self.dcLog("Network restored; triggering arrivals refresh.")
+                    self.refreshArrivalsCache()
+                }
+            }
+        }
+        monitor.start(queue: monitorQueue)
+        pathMonitor = monitor
+    }
+
+    deinit {
+        pathMonitor?.cancel()
     }
 }

@@ -11,6 +11,7 @@ import Foundation
 
 private let appGroupID = "group.com.yourco.dailycommuter"
 private let widgetKindID = "CtaTimesWidget"
+private let offlineFlagKey = "ctaTimes.offline"
 
 struct TimesEntry: TimelineEntry {
     let date: Date
@@ -19,6 +20,7 @@ struct TimesEntry: TimelineEntry {
     let lastUpdated: Date?
     let favorite: Favorite?
     let favorites: [Favorite]
+    let isOffline: Bool
 }
 
 struct TimesProvider: AppIntentTimelineProvider {
@@ -50,7 +52,8 @@ struct TimesProvider: AppIntentTimelineProvider {
               arrivals: [],
               lastUpdated: nil,
               favorite: nil,
-              favorites: [])
+              favorites: [],
+              isOffline: false)
     }
 
     func snapshot(for configuration: Intent, in context: Context) async -> Entry {
@@ -61,7 +64,7 @@ struct TimesProvider: AppIntentTimelineProvider {
     }
 
     func timeline(for configuration: Intent, in context: Context) async -> Timeline<Entry> {
-        let entry = await loadEntry(configuration: configuration, family: context.family)
+       let entry = await loadEntry(configuration: configuration, family: context.family)
         let next = entry.arrivals.suggestedRefresh(from: entry.date, lastUpdated: entry.lastUpdated)
 #if DEBUG
         log("timeline(for:) favorite=", configuration.favorite?.id ?? "nil",
@@ -77,12 +80,13 @@ struct TimesProvider: AppIntentTimelineProvider {
         // This tends to be honored more reliably by WidgetKit than a single
         // entry with `.after(next)`, and it also ensures the widget view
         // re-renders at `next` even if no network occurs.
-        let tick = TimesEntry(date: next,
+       let tick = TimesEntry(date: next,
                               configuration: configuration,
                               arrivals: entry.arrivals,
                               lastUpdated: entry.lastUpdated,
                               favorite: entry.favorite,
-                              favorites: entry.favorites)
+                              favorites: entry.favorites,
+                              isOffline: entry.isOffline)
         return Timeline(entries: [entry, tick], policy: .atEnd)
     }
 
@@ -90,9 +94,10 @@ struct TimesProvider: AppIntentTimelineProvider {
     private func loadEntry(configuration: Intent, family: WidgetFamily) async -> Entry {
         let now = Date()
         let favoriteID = configuration.favorite?.id
-        let (allArrivals, modified) = readCachedArrivals()
+        let (allArrivals, modified) = readCachedArrivals(now: now)
         let allFavorites = loadFavorites()
         let selectedFavorites: [Favorite]
+        let isOffline = currentOfflineStatus()
 
         if let id = favoriteID, id == FavoriteEntity.all.id {
             let limit = (family == .systemLarge) ? 4 : 2
@@ -112,7 +117,8 @@ struct TimesProvider: AppIntentTimelineProvider {
                      arrivals: filtered,
                      lastUpdated: modified,
                      favorite: selectedFavorites.first,
-                     favorites: selectedFavorites)
+                     favorites: selectedFavorites,
+                     isOffline: isOffline)
 #if DEBUG
         log("loadEntry:", "favoriteID=", favoriteID ?? "nil",
             "selectedFavorites=", selectedFavorites.count,
@@ -121,7 +127,7 @@ struct TimesProvider: AppIntentTimelineProvider {
         return entry
     }
 
-    private func readCachedArrivals() -> ([Arrival], Date?) {
+    private func readCachedArrivals(now: Date = .now) -> ([Arrival], Date?) {
         guard let url = FileManager.default
             .containerURL(forSecurityApplicationGroupIdentifier: appGroupID)?
             .appendingPathComponent("arrivals.json") else {
@@ -130,12 +136,12 @@ struct TimesProvider: AppIntentTimelineProvider {
 
         // Prefer embedded fetchedAt timestamp from cache payload.
         // Fall back to arrivals-only decode if needed.
-        let decodedWithTS = [Arrival].loadFromWithTimestamp(url: url)
-        let arrivals = decodedWithTS?.arrivals ?? ([Arrival].loadFrom(url: url) ?? [])
+        let decodedWithTS = [Arrival].loadFromWithTimestamp(url: url, now: now, allowStale: true)
+        let arrivals = decodedWithTS?.arrivals ?? ([Arrival].loadFrom(url: url, now: now) ?? [])
         let modified = decodedWithTS?.fetchedAt
-        #if DEBUG
+#if DEBUG
         log("readCachedArrivals:", "count=", arrivals.count, "modified=", ts(modified))
-        #endif
+#endif
         return (arrivals, modified)
     }
 
@@ -168,7 +174,9 @@ struct TimesProvider: AppIntentTimelineProvider {
                 let service: CTAService = CTAServiceLive()
                 let arrivals = try await service.arrivals(for: favorites)
                 arrivals.save(to: url, now: now)
-                WidgetCenter.shared.reloadTimelines(ofKind: widgetKindID)
+                await MainActor.run {
+                    WidgetCenter.shared.reloadTimelines(ofKind: widgetKindID)
+                }
 #if DEBUG
                 log("background fetch complete → reload timelines")
 #endif
@@ -176,7 +184,14 @@ struct TimesProvider: AppIntentTimelineProvider {
 #if DEBUG
                 log("background fetch error:", String(describing: error))
 #endif
+                await MainActor.run {
+                    WidgetCenter.shared.reloadTimelines(ofKind: widgetKindID)
+                }
             }
         }
+    }
+
+    private func currentOfflineStatus() -> Bool {
+        UserDefaults(suiteName: appGroupID)?.bool(forKey: offlineFlagKey) ?? false
     }
 }

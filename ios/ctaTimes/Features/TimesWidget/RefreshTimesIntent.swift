@@ -41,10 +41,14 @@ struct RefreshTimesIntent: AppIntent {
             }
 
             // 4) Nudge the widget to reload and reflect new cache + "Updated X min ago"
-            WidgetCenter.shared.reloadTimelines(ofKind: widgetKind)
+            await MainActor.run {
+                WidgetCenter.shared.reloadTimelines(ofKind: widgetKind)
+            }
         } catch {
             // Fail silently by design – keep existing cache/timestamp
-            WidgetCenter.shared.reloadTimelines(ofKind: widgetKind)
+            await MainActor.run {
+                WidgetCenter.shared.reloadTimelines(ofKind: widgetKind)
+            }
         }
 
         return .result()

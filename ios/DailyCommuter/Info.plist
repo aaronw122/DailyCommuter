@@ -35,7 +35,7 @@
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>CTA_API_BASE_URL</key>
-	<string>https://ctas.us</string>
+	<string>http://127.0.0.1:8080</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
 	<key>LSMinimumSystemVersion</key>

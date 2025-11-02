@@ -59,7 +59,8 @@ private extension TimesEntry {
             arrivals: arrivals,
             lastUpdated: Date(),
             favorite: fav,
-            favorites: [fav]
+            favorites: [fav],
+            isOffline: false
         )
     }
 
@@ -71,7 +72,8 @@ private extension TimesEntry {
             arrivals: [],
             lastUpdated: Date(),
             favorite: fav,
-            favorites: [fav]
+            favorites: [fav],
+            isOffline: false
         )
     }
 
@@ -83,7 +85,8 @@ private extension TimesEntry {
             arrivals: [],
             lastUpdated: nil, // no timestamp to imply stale/offline
             favorite: fav,
-            favorites: [fav]
+            favorites: [fav],
+            isOffline: true
         )
     }
 }

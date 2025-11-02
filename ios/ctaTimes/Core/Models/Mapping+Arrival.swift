@@ -48,9 +48,9 @@ private struct CachedArrivals: Codable {
     let arrivals: [Arrival]
 }
 
-/// Time-to-live for cached arrivals (30 minutes).
+/// Time-to-live for cached arrivals (reduced in dev to 5 minutes to ease UAT).
 public enum ArrivalCacheTTL {
-    public static let maxAge: TimeInterval = 30 * 60
+    public static let maxAge: TimeInterval = 5 * 60
 }
 
 public extension Array where Element == Arrival {
@@ -85,13 +85,16 @@ public extension Array where Element == Arrival {
     /// Returns nil if missing or stale.
     static func loadFromWithTimestamp(url: URL,
                                       maxAge: TimeInterval = ArrivalCacheTTL.maxAge,
-                                      now: Date = .now) -> (arrivals: [Arrival], fetchedAt: Date)? {
+                                      now: Date = .now,
+                                      allowStale: Bool = false) -> (arrivals: [Arrival], fetchedAt: Date, isStale: Bool)? {
         guard let data = try? Data(contentsOf: url) else { return nil }
         let dec = JSONDecoder()
         dec.dateDecodingStrategy = .iso8601
         guard let payload = try? dec.decode(CachedArrivals.self, from: data) else { return nil }
-        guard now.timeIntervalSince(payload.fetchedAt) <= maxAge else { return nil }
-        return (payload.arrivals, payload.fetchedAt)
+        let age = now.timeIntervalSince(payload.fetchedAt)
+        let isStale = age > maxAge
+        if isStale && !allowStale { return nil }
+        return (payload.arrivals, payload.fetchedAt, isStale)
     }
 
     /// Convenience: Save arrivals atomically to a file URL with timestamp.

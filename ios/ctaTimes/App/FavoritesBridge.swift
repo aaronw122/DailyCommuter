@@ -4,11 +4,10 @@ import WidgetKit
 #endif
 import Foundation
 import Dispatch
+import React
 
 @objc(FavoritesBridge)
-final class FavoritesBridge: NSObject, RCTBridgeModule {
-  @objc static func moduleName() -> String! { "FavoritesBridge" }
-  @objc static func requiresMainQueueSetup() -> Bool { false }
+final class FavoritesBridge: NSObject {
 
   private let queue = DispatchQueue(label: "FavoritesBridge.queue", qos: .utility)
 
@@ -37,7 +36,7 @@ final class FavoritesBridge: NSObject, RCTBridgeModule {
         Task { @MainActor in
           FavoritesStore.shared.replaceAll(with: favorites)
           #if canImport(WidgetKit)
-          WidgetCenter.shared.reloadTimelines(ofKind: "ctaTimes")
+          WidgetCenter.shared.reloadTimelines(ofKind: "CtaTimesWidget")
           #endif
           resolve(NSNull())
         }

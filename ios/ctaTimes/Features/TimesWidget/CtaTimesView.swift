@@ -35,10 +35,10 @@ struct CtaTimesView: View {
         } else if showsAllFavorites {
             allFavoritesContent
         } else if entry.arrivals.isEmpty {
-            VStack(alignment: .leading, spacing: 6) {
-                Text("You’re offline, connect to internet to see times.")
-                    .font(.footnote)
-                    .foregroundStyle(.secondary)
+            if entry.isOffline {
+                offlineNotice
+            } else {
+                fetchingNotice
             }
         } else {
             singleFavoriteContent
@@ -78,12 +78,7 @@ private extension CtaTimesView {
                             .overlay(Color(red: 223/255, green: 224/255, blue: 228/255).opacity(1))
                     }
                 }
-                if let last = entry.lastUpdated {
-                    Text("Last refreshed: \(timeString(from: last))")
-                        .font(.caption2)
-                        .foregroundStyle(.secondary)
-                        .frame(maxWidth: .infinity, alignment: .trailing)
-                }
+                lastUpdatedView
             }
             .background(
                 RoundedRectangle(cornerRadius: 16, style: .continuous)
@@ -131,12 +126,7 @@ private extension CtaTimesView {
                     let arrival = entry.arrivals.first(where: { $0.favoriteID == favorite.id })
                     favoriteCard(for: favorite, arrival: arrival)
                 }
-                if let last = entry.lastUpdated {
-                    Text("Last refreshed: \(timeString(from: last))")
-                        .font(.caption2)
-                        .foregroundStyle(.secondary)
-                        .frame(maxWidth: .infinity, alignment: .trailing)
-                }
+                lastUpdatedView
             }
             .padding(EdgeInsets(top: 3, leading: 5, bottom: 3, trailing: 5))
         }
@@ -194,6 +184,44 @@ private extension CtaTimesView {
         )
     }
 
+    private var offlineNotice: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            if let last = entry.lastUpdated {
+                Text("You’re currently offline. Last refreshed: \(timeString(from: last))")
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+            } else {
+                Text("You’re currently offline.")
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+            }
+        }
+    }
+
+    private var fetchingNotice: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Text("Fetching arrivals…")
+                .font(.footnote)
+                .foregroundStyle(.secondary)
+        }
+    }
+
+    @ViewBuilder
+    private var lastUpdatedView: some View {
+        if let last = entry.lastUpdated {
+            let prefix = entry.isOffline ? "You’re currently offline. " : ""
+            Text("\(prefix)Last refreshed: \(timeString(from: last))")
+                .font(.caption2)
+                .foregroundStyle(.secondary)
+                .frame(maxWidth: .infinity, alignment: .trailing)
+        } else if entry.isOffline {
+            Text("You’re currently offline. Last refreshed: unavailable")
+                .font(.caption2)
+                .foregroundStyle(.secondary)
+                .frame(maxWidth: .infinity, alignment: .trailing)
+        }
+    }
+
     func row(for stop: StopArrival, favorite: Favorite?) -> some View {
         HStack(alignment: .firstTextBaseline, spacing: 4) {
             let kind = kindForStop(stop, favorite: favorite)
@@ -224,12 +252,21 @@ private extension CtaTimesView {
                     .lineLimit(1)
             } else {
                 let ageMins = minutesSinceLastUpdate()
-                let times = stop.time.prefix(3).map { displayTime($0, ageMinutes: ageMins) }.joined(separator: ", ")
-                Text(times)
-                    .font(.headline.weight(.semibold))
-                    .monospacedDigit()
-                    .lineLimit(1)
-                    .foregroundColor(Color(red: 0/255, green: 0/255, blue: 0/255, opacity: 0.7))
+                let times = stop.time
+                    .compactMap { displayTime($0, ageMinutes: ageMins) }
+                    .prefix(3)
+                if times.isEmpty {
+                    Text("No arrivals")
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                        .lineLimit(1)
+                } else {
+                    Text(times.joined(separator: ", "))
+                        .font(.headline.weight(.semibold))
+                        .monospacedDigit()
+                        .lineLimit(1)
+                        .foregroundColor(Color(red: 0/255, green: 0/255, blue: 0/255, opacity: 0.7))
+                }
             }
         }
         .accessibilityElement(children: .combine)
@@ -287,13 +324,16 @@ private extension CtaTimesView {
         return max(0, Int(delta / 60.0))
     }
 
-    func displayTime(_ info: TimeInfo, ageMinutes: Int) -> String {
+    func displayTime(_ info: TimeInfo, ageMinutes: Int) -> String? {
         let raw = info.time.trimmingCharacters(in: .whitespacesAndNewlines)
         let upper = raw.uppercased()
-        if upper == "DUE" { return "DUE" }
+        if upper == "DUE" {
+            return ageMinutes >= 2 ? nil : "DUE"
+        }
         if let n = Int(upper) {
             let adjusted = max(0, n - ageMinutes)
-            return adjusted == 0 ? "DUE" : String(adjusted)
+            if adjusted <= -2 { return nil }
+            return adjusted <= 0 ? "DUE" : String(adjusted)
         }
         return raw
     }
