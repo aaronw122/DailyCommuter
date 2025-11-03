@@ -172,7 +172,7 @@ private extension CtaTimesView {
                     row(for: stop, favorite: favorite)
                 }
             } else {
-                Text("Fetching arrivals…")
+                Text(entry.isOffline ? "Offline — reconnect to refresh times." : "Fetching arrivals…")
                     .font(.footnote)
                     .foregroundStyle(.secondary)
             }
@@ -186,14 +186,13 @@ private extension CtaTimesView {
 
     private var offlineNotice: some View {
         VStack(alignment: .leading, spacing: 6) {
+            Text("You’re currently offline.")
+                .font(.footnote)
+                .foregroundStyle(.secondary)
             if let last = entry.lastUpdated {
-                Text("You’re currently offline. Last refreshed: \(timeString(from: last))")
-                    .font(.footnote)
-                    .foregroundStyle(.secondary)
-            } else {
-                Text("You’re currently offline.")
-                    .font(.footnote)
-                    .foregroundStyle(.secondary)
+                Text("Last refreshed: \(timeString(from: last))")
+                    .font(.caption2)
+                    .foregroundStyle(.tertiary)
             }
         }
     }
@@ -208,14 +207,18 @@ private extension CtaTimesView {
 
     @ViewBuilder
     private var lastUpdatedView: some View {
-        if let last = entry.lastUpdated {
-            let prefix = entry.isOffline ? "You’re currently offline. " : ""
-            Text("\(prefix)Last refreshed: \(timeString(from: last))")
+        if entry.isOffline, let message = offlineBannerMessage {
+            Text(message)
+                .font(.caption2)
+                .foregroundStyle(.secondary)
+                .frame(maxWidth: .infinity, alignment: .trailing)
+        } else if let last = entry.lastUpdated {
+            Text("Last refreshed: \(timeString(from: last))")
                 .font(.caption2)
                 .foregroundStyle(.secondary)
                 .frame(maxWidth: .infinity, alignment: .trailing)
         } else if entry.isOffline {
-            Text("You’re currently offline. Last refreshed: unavailable")
+            Text("Offline — reconnect to refresh times.")
                 .font(.caption2)
                 .foregroundStyle(.secondary)
                 .frame(maxWidth: .infinity, alignment: .trailing)
@@ -251,10 +254,7 @@ private extension CtaTimesView {
                     .foregroundStyle(.primary)
                     .lineLimit(1)
             } else {
-                let ageMins = minutesSinceLastUpdate()
-                let times = stop.time
-                    .compactMap { displayTime($0, ageMinutes: ageMins) }
-                    .prefix(3)
+                let times = filteredTimes(for: stop).prefix(3)
                 if times.isEmpty {
                     Text("No arrivals")
                         .font(.footnote)
@@ -324,18 +324,28 @@ private extension CtaTimesView {
         return max(0, Int(delta / 60.0))
     }
 
-    func displayTime(_ info: TimeInfo, ageMinutes: Int) -> String? {
+    func displayTime(_ info: TimeInfo, ageMinutes: Int?) -> String? {
         let raw = info.time.trimmingCharacters(in: .whitespacesAndNewlines)
         let upper = raw.uppercased()
         if upper == "DUE" {
-            return ageMinutes >= 2 ? nil : "DUE"
+            guard entry.isOffline, let mins = ageMinutes else { return "DUE" }
+            return mins >= 2 ? nil : "DUE"
         }
         if let n = Int(upper) {
-            let adjusted = max(0, n - ageMinutes)
-            if adjusted <= -2 { return nil }
-            return adjusted <= 0 ? "DUE" : String(adjusted)
+            if entry.isOffline, let mins = ageMinutes {
+                let adjusted = max(0, n - mins)
+                if adjusted <= -2 { return nil }
+                return adjusted <= 0 ? "DUE" : String(adjusted)
+            } else {
+                return String(n)
+            }
         }
         return raw
+    }
+
+    func filteredTimes(for stop: StopArrival, ageMinutes: Int? = nil) -> [String] {
+        let mins = entry.isOffline ? (ageMinutes ?? minutesSinceLastUpdate()) : nil
+        return stop.time.compactMap { displayTime($0, ageMinutes: mins) }
     }
 
     func orderedStops(for favorite: Favorite?, incoming: [StopArrival]) -> [StopArrival] {
@@ -349,10 +359,32 @@ private extension CtaTimesView {
             }
     }
 
-    func maxRowsForCurrentFamily() -> Int {
+func maxRowsForCurrentFamily() -> Int {
         switch family {
         case .systemLarge: return 4
         default: return 2
         }
+    }
+}
+
+private extension CtaTimesView {
+    var hasDisplayablePredictions: Bool {
+        guard !entry.arrivals.isEmpty else { return false }
+        let age = minutesSinceLastUpdate()
+        for arrival in entry.arrivals {
+            for stop in arrival.stops {
+                if !filteredTimes(for: stop, ageMinutes: age).isEmpty {
+                    return true
+                }
+            }
+        }
+        return false
+    }
+
+    var offlineBannerMessage: String? {
+        guard entry.isOffline else { return nil }
+        return hasDisplayablePredictions
+            ? "Offline mode: predicting times using recent data."
+            : "Offline — reconnect to refresh times."
     }
 }

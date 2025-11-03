@@ -7,7 +7,7 @@
 	<key>CFBundleShortVersionString</key>
 	<string>$(MARKETING_VERSION)</string>
 	<key>CTA_API_BASE_URL</key>
-	<string>http://127.0.0.1:8080</string>
+	<string>https://ctas.us</string>
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSExceptionDomains</key>
