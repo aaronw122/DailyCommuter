@@ -33,12 +33,15 @@ public struct CTAServiceLive: CTAService {
 
     // Public entry: fetch across all favorite stops
     public func arrivals(for favorites: [Favorite]) async throws -> [Arrival] {
-        log("arrivals(for:) favorites=\(favorites.count)")
+        let fetchID = UUID().uuidString.prefix(8)
+        let stopCount = favorites.reduce(0) { $0 + $1.stops.count }
+        log("[\(fetchID)] arrivals(for:) favorites=\(favorites.count) totalStops=\(stopCount)")
         typealias BucketItem = (favoriteID: String, stop: StopArrival)
         return try await withThrowingTaskGroup(of: BucketItem.self) { group in
             for fav in favorites {
                 for stop in fav.stops {
                     group.addTask {
+                        self.log("[\(fetchID)] start stop kind=\(stop.kind) route=\(stop.routeId) stopId=\(stop.stopId)")
                         switch stop.kind {
                         case .bus:
                             let stopArrival = try await self.fetchBusStopArrival(
@@ -46,6 +49,7 @@ public struct CTAServiceLive: CTAService {
                                 direction: stop.direction,
                                 stopId: stop.stopId
                             )
+                            self.log("[\(fetchID)] completed bus route=\(stop.routeId) stopId=\(stop.stopId)")
                             return (favoriteID: fav.id, stop: stopArrival)
                         case .train:
                             let stopArrival = try await self.fetchTrainStopArrival(
@@ -53,6 +57,7 @@ public struct CTAServiceLive: CTAService {
                                 routeId: stop.routeId,
                                 direction: stop.direction
                             )
+                            self.log("[\(fetchID)] completed train route=\(stop.routeId) stopId=\(stop.stopId)")
                             return (favoriteID: fav.id, stop: stopArrival)
                         }
                     }
@@ -67,7 +72,7 @@ public struct CTAServiceLive: CTAService {
             let results: [Arrival] = buckets.map { (favID, stops) in
                 Arrival(favoriteID: favID, stops: stops)
             }
-            log("arrivals(for:) built \(results.count) favorite payloads")
+            log("[\(fetchID)] completed with \(results.count) favorite payloads")
             return results
         }
     }

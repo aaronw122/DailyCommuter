@@ -13,12 +13,17 @@ import Foundation
 // Keep this in sync with Provider.swift
 private let appGroupID = "group.com.yourco.dailycommuter"
 private let widgetKind = "CtaTimesWidget"
+private let manualRefreshKey = "ctaTimes.manualRefreshAt"
 
 struct RefreshTimesIntent: AppIntent {
     static var title: LocalizedStringResource { "Refresh Arrivals" }
     static var description: IntentDescription { "Fetch latest arrivals and update the widget." }
 
     func perform() async throws -> some IntentResult {
+        if let defaults = UserDefaults(suiteName: appGroupID) {
+            defaults.set(Date().timeIntervalSince1970, forKey: manualRefreshKey)
+        }
+
         // 1) Load favorites from App Group (DTOs) → map to domain
         let store = SharedStore(groupID: appGroupID)
         let dtos = store.loadFavoritesDTO()
