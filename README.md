@@ -9,6 +9,10 @@ A mobile app that shows your daily bus times at a glance. Built because my phone
 - Save favorite routes and stops for one-tap viewing
 - iOS native widget built with SwiftUI
 
+## Try it
+
+[Download on TestFlight](https://testflight.apple.com/join/yW1pzgWA)
+
 ## Tech stack
 
 - **Frontend:** React Native (Expo) + TypeScript
