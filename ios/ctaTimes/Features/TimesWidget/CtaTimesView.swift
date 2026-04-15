@@ -12,13 +12,14 @@ import AppIntents
 struct CtaTimesView: View {
     let entry: TimesEntry
     @Environment(\.widgetFamily) private var family
+    @Environment(\.colorScheme) private var colorScheme
 
     var body: some View {
         ZStack {
             content
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         }
-        .containerBackground(.white, for: .widget)
+        .containerBackground(appBackground, for: .widget)
     }
 
     @ViewBuilder
@@ -70,19 +71,19 @@ private extension CtaTimesView {
             VStack(alignment: .leading, spacing: 12) {
                 header(for: favorite)
                 Divider()
-                    .overlay(Color(red: 223/255, green: 224/255, blue: 228/255).opacity(1))
+                    .overlay(dividerColor.opacity(1))
                 ForEach(Array(displayStops.enumerated()), id: \.element.id) { index, stop in
                     row(for: stop, favorite: favorite)
                     if index < displayStops.count - 1 {
                         Divider()
-                            .overlay(Color(red: 223/255, green: 224/255, blue: 228/255).opacity(1))
+                            .overlay(dividerColor.opacity(1))
                     }
                 }
                 lastUpdatedView
             }
             .background(
                 RoundedRectangle(cornerRadius: 16, style: .continuous)
-                    .fill(Color.white)
+                    .fill(cardBackground)
             )
             .padding(EdgeInsets(top: 3, leading: 5, bottom: 3, trailing: 5))
         } else {
@@ -109,10 +110,10 @@ private extension CtaTimesView {
                 HStack(spacing: 8) {
                     Image(systemName: "square.grid.2x2")
                         .imageScale(.medium)
-                        .foregroundColor(Color(red: 0/255, green: 0/255, blue: 0/255, opacity: 1.0))
+                        .foregroundColor(primaryText)
                     Text("All Favorites")
                         .font(.headline)
-                        .foregroundStyle(.primary)
+                        .foregroundColor(primaryText)
                     Spacer()
                     Button(intent: RefreshTimesIntent()) {
                         Image(systemName: "arrow.clockwise")
@@ -136,12 +137,11 @@ private extension CtaTimesView {
         HStack(spacing: 8) {
             Image(systemName: "mappin")
                 .imageScale(.medium)
-                .foregroundColor(Color(red: 0/255, green: 0/255, blue: 0/255, opacity: 1.0))
+                .foregroundColor(primaryText)
             Text(entry.configuration.favorite?.name ?? favorite?.name ?? "Favorite")
                 .font(.headline)
                 .lineLimit(1)
-                .foregroundStyle(.primary)
-                .foregroundColor(Color(red: 0/255, green: 0/255, blue: 0/255, opacity: 1.0))
+                .foregroundColor(primaryText)
             Spacer()
             Button(intent: RefreshTimesIntent()) {
                 Image(systemName: "arrow.clockwise")
@@ -157,11 +157,11 @@ private extension CtaTimesView {
             HStack(spacing: 8) {
                 Image(systemName: "mappin")
                     .imageScale(.medium)
-                    .foregroundColor(Color(red: 0/255, green: 0/255, blue: 0/255, opacity: 1.0))
+                    .foregroundColor(primaryText)
                 Text(favorite.name)
                     .font(.headline)
                     .lineLimit(1)
-                    .foregroundStyle(.primary)
+                    .foregroundColor(primaryText)
                 Spacer()
             }
 
@@ -180,19 +180,19 @@ private extension CtaTimesView {
         .padding(EdgeInsets(top: 10, leading: 12, bottom: 10, trailing: 12))
         .background(
             RoundedRectangle(cornerRadius: 16, style: .continuous)
-                .fill(Color.white)
+                .fill(cardBackground)
         )
     }
 
     private var offlineNotice: some View {
         VStack(alignment: .leading, spacing: 6) {
-            Text("You’re currently offline.")
-                .font(.footnote)
-                .foregroundStyle(.secondary)
+                Text("You’re currently offline.")
+                    .font(.footnote)
+                    .foregroundColor(secondaryText)
             if let last = entry.lastUpdated {
                 Text("Last refreshed: \(timeString(from: last))")
                     .font(.caption2)
-                    .foregroundStyle(.tertiary)
+                    .foregroundColor(tertiaryText)
             }
         }
     }
@@ -201,7 +201,7 @@ private extension CtaTimesView {
         VStack(alignment: .leading, spacing: 6) {
             Text("Fetching arrivals…")
                 .font(.footnote)
-                .foregroundStyle(.secondary)
+                .foregroundColor(secondaryText)
         }
     }
 
@@ -210,17 +210,17 @@ private extension CtaTimesView {
         if entry.isOffline, let message = offlineBannerMessage {
             Text(message)
                 .font(.caption2)
-                .foregroundStyle(.secondary)
+                .foregroundColor(secondaryText)
                 .frame(maxWidth: .infinity, alignment: .trailing)
         } else if let last = entry.lastUpdated {
             Text("Last refreshed: \(timeString(from: last))")
                 .font(.caption2)
-                .foregroundStyle(.secondary)
+                .foregroundColor(secondaryText)
                 .frame(maxWidth: .infinity, alignment: .trailing)
         } else if entry.isOffline {
             Text("Offline — reconnect to refresh times.")
                 .font(.caption2)
-                .foregroundStyle(.secondary)
+                .foregroundColor(secondaryText)
                 .frame(maxWidth: .infinity, alignment: .trailing)
         }
     }
@@ -239,10 +239,10 @@ private extension CtaTimesView {
                     .font(.headline.weight(.semibold))
                     .lineLimit(1)
                     .minimumScaleFactor(0.8)
-                    .foregroundColor(Color(red: 0/255, green: 0/255, blue: 0/255, opacity: 0.7))
+                    .foregroundColor(primaryText)
                 Text(destination(for: stop))
                     .font(.subheadline)
-                    .foregroundStyle(.secondary)
+                    .foregroundColor(secondaryText)
                     .lineLimit(1)
                     .foregroundColor(Color(red: 113/255, green: 113/255, blue: 113/255, opacity: 1.0))
             }
@@ -258,14 +258,14 @@ private extension CtaTimesView {
                 if times.isEmpty {
                     Text("No arrivals")
                         .font(.footnote)
-                        .foregroundStyle(.secondary)
+                        .foregroundColor(secondaryText)
                         .lineLimit(1)
                 } else {
                     Text(times.joined(separator: ", "))
                         .font(.headline.weight(.semibold))
                         .monospacedDigit()
                         .lineLimit(1)
-                        .foregroundColor(Color(red: 0/255, green: 0/255, blue: 0/255, opacity: 0.7))
+                        .foregroundColor(primaryText)
                 }
             }
         }
@@ -368,6 +368,14 @@ func maxRowsForCurrentFamily() -> Int {
 }
 
 private extension CtaTimesView {
+    var isDarkMode: Bool { colorScheme == .dark }
+    var appBackground: Color { isDarkMode ? Color(.black) : Color(.white) }
+    var cardBackground: Color { appBackground }
+    var dividerColor: Color { isDarkMode ? Color(white: 0.3) : Color(red: 223/255, green: 224/255, blue: 228/255) }
+    var primaryText: Color { isDarkMode ? .white : Color(red: 0/255, green: 0/255, blue: 0/255, opacity: 0.7) }
+    var secondaryText: Color { isDarkMode ? Color(white: 0.8) : Color(red: 113/255, green: 113/255, blue: 113/255, opacity: 1.0) }
+    var tertiaryText: Color { isDarkMode ? Color(white: 0.6) : Color(red: 150/255, green: 150/255, blue: 150/255, opacity: 1.0) }
+
     var hasDisplayablePredictions: Bool {
         guard !entry.arrivals.isEmpty else { return false }
         let age = minutesSinceLastUpdate()

@@ -23,7 +23,6 @@ export default function SaveFavorite() {
     const handleToggle = (name: string, isFull: boolean) => {
         if (isFull) return;
         setSelectedFavorite(prev => (prev === name ? null : name));
-        // once you know `name`, you can also pull in your stopData and save it here
     };
 
 
@@ -50,7 +49,6 @@ export default function SaveFavorite() {
                     type: type!
                 }]
             }
-            //stop data from previous screen should be saved up here
         });
     };
 
@@ -61,7 +59,6 @@ export default function SaveFavorite() {
                 <View style={{ width: '100%', paddingHorizontal: 25, alignItems: 'center'}}>
                     <CtaButton buttonText={"+ New Favorite"} onPress={() => {
                         router.push('/modals/createFavorite');
-                        console.log('newFav Clicked')
                     }}
                                theme = 'secondary'
                     />
@@ -75,10 +72,7 @@ export default function SaveFavorite() {
                                       stops={fav.stops.length}
                                       isSelected={!isFull && selectedFavorite === fav.name}
                                       isDisabled={isFull}
-                                      onPress={()=>{
-                                          console.log('clicked',fav.id);
-                                          handleToggle(fav.name, isFull);
-                                      }}
+                                      onPress={() => handleToggle(fav.name, isFull)}
                             />
                         );
                     })}
@@ -88,7 +82,6 @@ export default function SaveFavorite() {
                 <CtaButton buttonText={"Done"} onPress={() => {
                 handleUpdate();
                 router.push('/(tabs)/favorites');
-                console.log('fav saved');
             }}
                 theme = 'primary'
                 />
@@ -101,7 +94,5 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#ffffff',
-        paddingTop: 0,
     },
-
 });

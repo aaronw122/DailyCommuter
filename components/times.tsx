@@ -1,10 +1,10 @@
 import React from 'react'
-import { View, Text, StyleSheet, Dimensions } from 'react-native'
+import { View, Text, StyleSheet } from 'react-native'
 
 
-type TimeProps ={
-    time: string,
-    dest: any,
+type TimeProps = {
+    time: string;
+    dest: string;
 }
 
 export default function Time ({time, dest}:TimeProps) {
@@ -13,7 +13,7 @@ export default function Time ({time, dest}:TimeProps) {
         <View style = {styles.container}>
             <View style = {styles.row}>
                 <Text style = {styles.text}>
-                    {time === 'DLY' || time === 'DUE' || time === "no service is scheduled at this time" ? time :`${time} mins`}
+                    {/^\d+$/.test(time) ? `${time} mins` : time}
                 </Text>
                 <Text style = {styles.dest}>
                     {dest}

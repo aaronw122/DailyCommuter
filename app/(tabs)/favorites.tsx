@@ -28,9 +28,6 @@ export default function Favorites() {
     }
 
     return (
-        //cta for creating favorite
-        //list
-
     <GestureHandlerRootView>
         <View style={styles.container}>
             {favorites.map(fav => (
@@ -38,21 +35,16 @@ export default function Favorites() {
                         name={fav.name}
                         stops={fav.stops.length}
                         onPress={()=> {
-                            console.log('clicked',fav.id);
                             router.push({
                                 pathname:'/favoriteDetail',
                                 params: {favoriteId: fav.id},
-
                             })
                         }}
-                        onLongPress={() => {
-                            console.log("long press worked")
-                            handleLongPress(fav.id)}}
+                        onLongPress={() => handleLongPress(fav.id)}
               />
             ))}
         </View>
     </GestureHandlerRootView>
-
     );
 }
 
@@ -62,8 +54,5 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#ffffff',
         alignItems: 'center',
-    },
-    text: {
-        color: '#000000',
     },
 });

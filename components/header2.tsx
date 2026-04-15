@@ -1,6 +1,5 @@
 import React from 'react';
-import {View, Text, StyleSheet, ViewStyle} from 'react-native';
-import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
+import {View, Text, StyleSheet} from 'react-native';
 
 export type header2Props = {
     text: string;

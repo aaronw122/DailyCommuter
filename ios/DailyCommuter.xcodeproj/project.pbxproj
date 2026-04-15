@@ -11,9 +11,45 @@
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		35D87C192B461733B132887E /* libPods-DailyCommuter.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FC27A3C417AA9C85DA4BF6B1 /* libPods-DailyCommuter.a */; };
 		3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */; };
+		7ED1DF45810A88FE694E83D0 /* FavoritesBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F38B7897F23B9FBE5727996 /* FavoritesBridge.swift */; };
+		917F19CA5EB4945BEFBF3758 /* FavoritesBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = 57A99C0B0D9998BA2B3A8A63 /* FavoritesBridge.m */; };
 		93B342642E386E85006EC422 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 93B342632E386E85006EC422 /* WidgetKit.framework */; };
 		93B342662E386E85006EC422 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 93B342652E386E85006EC422 /* SwiftUI.framework */; };
 		93B342772E386E88006EC422 /* ctaTimesExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 93B342622E386E85006EC422 /* ctaTimesExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		93FA2DF12F49519800BA00A5 /* Arrival.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93FA2DCF2F49519800BA00A5 /* Arrival.swift */; };
+		93FA2DF22F49519800BA00A5 /* ArrivalDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93FA2DD02F49519800BA00A5 /* ArrivalDTO.swift */; };
+		93FA2DF32F49519800BA00A5 /* Favorite.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93FA2DD12F49519800BA00A5 /* Favorite.swift */; };
+		93FA2DF42F49519800BA00A5 /* FavoriteDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93FA2DD22F49519800BA00A5 /* FavoriteDTO.swift */; };
+		93FA2DF52F49519800BA00A5 /* Mapping+Arrival.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93FA2DD32F49519800BA00A5 /* Mapping+Arrival.swift */; };
+		93FA2DF62F49519800BA00A5 /* Mapping+Favorite.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93FA2DD42F49519800BA00A5 /* Mapping+Favorite.swift */; };
+		93FA2DF72F49519800BA00A5 /* CTAService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93FA2DD62F49519800BA00A5 /* CTAService.swift */; };
+		93FA2DF82F49519800BA00A5 /* CTAServiceLive.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93FA2DD72F49519800BA00A5 /* CTAServiceLive.swift */; };
+		93FA2DF92F49519800BA00A5 /* SharedStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93FA2DD92F49519800BA00A5 /* SharedStore.swift */; };
+		93FA2DFA2F49519800BA00A5 /* Arrivals+Refresh.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93FA2DDB2F49519800BA00A5 /* Arrivals+Refresh.swift */; };
+		93FA2DFB2F49519800BA00A5 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93FA2DDC2F49519800BA00A5 /* Logger.swift */; };
+		93FA2DFC2F49519800BA00A5 /* CtaTimesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93FA2DDF2F49519800BA00A5 /* CtaTimesView.swift */; };
+		93FA2DFD2F49519800BA00A5 /* CtaTimesView+Preview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93FA2DE02F49519800BA00A5 /* CtaTimesView+Preview.swift */; };
+		93FA2DFE2F49519800BA00A5 /* CtaTimesWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93FA2DE12F49519800BA00A5 /* CtaTimesWidget.swift */; };
+		93FA2DFF2F49519800BA00A5 /* FavoriteSelectionIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93FA2DE22F49519800BA00A5 /* FavoriteSelectionIntent.swift */; };
+		93FA2E002F49519800BA00A5 /* Provider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93FA2DE32F49519800BA00A5 /* Provider.swift */; };
+		93FA2E012F49519800BA00A5 /* RefreshTimesIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93FA2DE42F49519800BA00A5 /* RefreshTimesIntent.swift */; };
+		93FA2E022F49519800BA00A5 /* TimesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93FA2DE52F49519800BA00A5 /* TimesViewModel.swift */; };
+		93FA2E032F49519800BA00A5 /* FavoritesStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93FA2DE82F49519800BA00A5 /* FavoritesStore.swift */; };
+		93FA2E042F49519800BA00A5 /* AppIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93FA2DEA2F49519800BA00A5 /* AppIntent.swift */; };
+		93FA2E052F49519800BA00A5 /* ctaTimesBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93FA2DEC2F49519800BA00A5 /* ctaTimesBundle.swift */; };
+		93FA2E062F49519800BA00A5 /* ctaTimesControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93FA2DED2F49519800BA00A5 /* ctaTimesControl.swift */; };
+		93FA2E072F49519800BA00A5 /* ctaTimesLiveActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93FA2DEE2F49519800BA00A5 /* ctaTimesLiveActivity.swift */; };
+		93FA2E082F49519800BA00A5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 93FA2DEB2F49519800BA00A5 /* Assets.xcassets */; };
+		93FA2E0A2F49519800BA00A5 /* ArrivalDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93FA2DD02F49519800BA00A5 /* ArrivalDTO.swift */; };
+		93FA2E0B2F49519800BA00A5 /* Mapping+Favorite.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93FA2DD42F49519800BA00A5 /* Mapping+Favorite.swift */; };
+		93FA2E0C2F49519800BA00A5 /* SharedStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93FA2DD92F49519800BA00A5 /* SharedStore.swift */; };
+		93FA2E0D2F49519800BA00A5 /* Mapping+Arrival.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93FA2DD32F49519800BA00A5 /* Mapping+Arrival.swift */; };
+		93FA2E0E2F49519800BA00A5 /* CTAServiceLive.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93FA2DD72F49519800BA00A5 /* CTAServiceLive.swift */; };
+		93FA2E0F2F49519800BA00A5 /* FavoritesStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93FA2DE82F49519800BA00A5 /* FavoritesStore.swift */; };
+		93FA2E102F49519800BA00A5 /* CTAService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93FA2DD62F49519800BA00A5 /* CTAService.swift */; };
+		93FA2E112F49519800BA00A5 /* Favorite.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93FA2DD12F49519800BA00A5 /* Favorite.swift */; };
+		93FA2E122F49519800BA00A5 /* Arrival.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93FA2DCF2F49519800BA00A5 /* Arrival.swift */; };
+		93FA2E132F49519800BA00A5 /* FavoriteDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93FA2DD22F49519800BA00A5 /* FavoriteDTO.swift */; };
 		BB2F792D24A3F905000567C9 /* Expo.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB2F792C24A3F905000567C9 /* Expo.plist */; };
 		E0C7D111FEE0D69D53B21784 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = DFC5395434A7CB284A71B476 /* PrivacyInfo.xcprivacy */; };
 		F11748422D0307B40044C1D9 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F11748412D0307B40044C1D9 /* AppDelegate.swift */; };
@@ -44,17 +80,44 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		0F38B7897F23B9FBE5727996 /* FavoritesBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesBridge.swift; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* DailyCommuter.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DailyCommuter.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = DailyCommuter/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = DailyCommuter/Info.plist; sourceTree = "<group>"; };
 		4C46E1B98405A52F71AEBEFA /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-DailyCommuter/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
 		554FC7DC2DCED18E4B3725FC /* Pods-DailyCommuter.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DailyCommuter.release.xcconfig"; path = "Target Support Files/Pods-DailyCommuter/Pods-DailyCommuter.release.xcconfig"; sourceTree = "<group>"; };
+		57A99C0B0D9998BA2B3A8A63 /* FavoritesBridge.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FavoritesBridge.m; sourceTree = "<group>"; };
 		936473E82E46FD4600750481 /* DailyCommuter.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = DailyCommuter.entitlements; path = DailyCommuter/DailyCommuter.entitlements; sourceTree = "<group>"; };
 		936473F22E47E01B00750481 /* DailyCommuter-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "DailyCommuter-Bridging-Header.h"; sourceTree = "<group>"; };
 		93B342622E386E85006EC422 /* ctaTimesExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = ctaTimesExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		93B342632E386E85006EC422 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		93B342652E386E85006EC422 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 		93B345B72E46F636006EC422 /* ctaTimesExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ctaTimesExtension.entitlements; sourceTree = "<group>"; };
+		93FA2DCF2F49519800BA00A5 /* Arrival.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Arrival.swift; sourceTree = "<group>"; };
+		93FA2DD02F49519800BA00A5 /* ArrivalDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArrivalDTO.swift; sourceTree = "<group>"; };
+		93FA2DD12F49519800BA00A5 /* Favorite.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Favorite.swift; sourceTree = "<group>"; };
+		93FA2DD22F49519800BA00A5 /* FavoriteDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoriteDTO.swift; sourceTree = "<group>"; };
+		93FA2DD32F49519800BA00A5 /* Mapping+Arrival.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Mapping+Arrival.swift"; sourceTree = "<group>"; };
+		93FA2DD42F49519800BA00A5 /* Mapping+Favorite.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Mapping+Favorite.swift"; sourceTree = "<group>"; };
+		93FA2DD62F49519800BA00A5 /* CTAService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CTAService.swift; sourceTree = "<group>"; };
+		93FA2DD72F49519800BA00A5 /* CTAServiceLive.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CTAServiceLive.swift; sourceTree = "<group>"; };
+		93FA2DD92F49519800BA00A5 /* SharedStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedStore.swift; sourceTree = "<group>"; };
+		93FA2DDB2F49519800BA00A5 /* Arrivals+Refresh.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Arrivals+Refresh.swift"; sourceTree = "<group>"; };
+		93FA2DDC2F49519800BA00A5 /* Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
+		93FA2DDF2F49519800BA00A5 /* CtaTimesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CtaTimesView.swift; sourceTree = "<group>"; };
+		93FA2DE02F49519800BA00A5 /* CtaTimesView+Preview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CtaTimesView+Preview.swift"; sourceTree = "<group>"; };
+		93FA2DE12F49519800BA00A5 /* CtaTimesWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CtaTimesWidget.swift; sourceTree = "<group>"; };
+		93FA2DE22F49519800BA00A5 /* FavoriteSelectionIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoriteSelectionIntent.swift; sourceTree = "<group>"; };
+		93FA2DE32F49519800BA00A5 /* Provider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Provider.swift; sourceTree = "<group>"; };
+		93FA2DE42F49519800BA00A5 /* RefreshTimesIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RefreshTimesIntent.swift; sourceTree = "<group>"; };
+		93FA2DE52F49519800BA00A5 /* TimesViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimesViewModel.swift; sourceTree = "<group>"; };
+		93FA2DE82F49519800BA00A5 /* FavoritesStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesStore.swift; sourceTree = "<group>"; };
+		93FA2DEA2F49519800BA00A5 /* AppIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppIntent.swift; sourceTree = "<group>"; };
+		93FA2DEB2F49519800BA00A5 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		93FA2DEC2F49519800BA00A5 /* ctaTimesBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ctaTimesBundle.swift; sourceTree = "<group>"; };
+		93FA2DED2F49519800BA00A5 /* ctaTimesControl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ctaTimesControl.swift; sourceTree = "<group>"; };
+		93FA2DEE2F49519800BA00A5 /* ctaTimesLiveActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ctaTimesLiveActivity.swift; sourceTree = "<group>"; };
+		93FA2DEF2F49519800BA00A5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = SplashScreen.storyboard; path = DailyCommuter/SplashScreen.storyboard; sourceTree = "<group>"; };
 		B8784F242C79851A18D6B577 /* Pods-DailyCommuter.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DailyCommuter.debug.xcconfig"; path = "Target Support Files/Pods-DailyCommuter/Pods-DailyCommuter.debug.xcconfig"; sourceTree = "<group>"; };
 		BB2F792C24A3F905000567C9 /* Expo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Expo.plist; sourceTree = "<group>"; };
@@ -63,52 +126,6 @@
 		F11748412D0307B40044C1D9 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = DailyCommuter/AppDelegate.swift; sourceTree = "<group>"; };
 		FC27A3C417AA9C85DA4BF6B1 /* libPods-DailyCommuter.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-DailyCommuter.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
-
-/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		936473E92E46FE3500750481 /* Exceptions for "ctaTimes" folder in "ctaTimesExtension" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				App/FavoritesBridge.m,
-				App/FavoritesBridge.swift,
-				Info.plist,
-			);
-			target = 93B342612E386E85006EC422 /* ctaTimesExtension */;
-		};
-		936473F42E47E44200750481 /* Exceptions for "ctaTimes" folder in "DailyCommuter" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				App/FavoritesBridge.m,
-				App/FavoritesBridge.swift,
-				Core/Models/Arrival.swift,
-				Core/Models/ArrivalDTO.swift,
-				Core/Models/Favorite.swift,
-				Core/Models/FavoriteDTO.swift,
-				"Core/Models/Mapping+Arrival.swift",
-				"Core/Models/Mapping+Favorite.swift",
-				Core/Networking/CTAService.swift,
-				Core/Networking/CTAServiceLive.swift,
-				Core/Persistence/SharedStore.swift,
-				Stores/FavoritesStore.swift,
-			);
-			target = 13B07F861A680F5B00A75B9A /* DailyCommuter */;
-		};
-/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
-
-/* Begin PBXFileSystemSynchronizedRootGroup section */
-		93B342672E386E85006EC422 /* ctaTimes */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				936473F42E47E44200750481 /* Exceptions for "ctaTimes" folder in "DailyCommuter" target */,
-				936473E92E46FE3500750481 /* Exceptions for "ctaTimes" folder in "ctaTimesExtension" target */,
-			);
-			explicitFileTypes = {
-			};
-			explicitFolders = (
-			);
-			path = ctaTimes;
-			sourceTree = "<group>";
-		};
-/* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		13B07F8C1A680F5B00A75B9A /* Frameworks */ = {
@@ -136,6 +153,7 @@
 			children = (
 				936473E82E46FD4600750481 /* DailyCommuter.entitlements */,
 				F11748412D0307B40044C1D9 /* AppDelegate.swift */,
+				5232BCE0C624152669439524 /* Bridge */,
 				BB2F792B24A3F905000567C9 /* Supporting */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
@@ -165,6 +183,16 @@
 			name = ExpoModulesProviders;
 			sourceTree = "<group>";
 		};
+		5232BCE0C624152669439524 /* Bridge */ = {
+			isa = PBXGroup;
+			children = (
+				0F38B7897F23B9FBE5727996 /* FavoritesBridge.swift */,
+				57A99C0B0D9998BA2B3A8A63 /* FavoritesBridge.m */,
+			);
+			name = Bridge;
+			path = DailyCommuter/Bridge;
+			sourceTree = "<group>";
+		};
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
@@ -178,7 +206,7 @@
 				93B345B72E46F636006EC422 /* ctaTimesExtension.entitlements */,
 				13B07FAE1A68108700A75B9A /* DailyCommuter */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
-				93B342672E386E85006EC422 /* ctaTimes */,
+				93FA2DF02F49519800BA00A5 /* ctaTimes */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
 				EFB00F26E59BE873D4BF36E5 /* Pods */,
@@ -196,6 +224,102 @@
 				93B342622E386E85006EC422 /* ctaTimesExtension.appex */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		93FA2DD52F49519800BA00A5 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				93FA2DCF2F49519800BA00A5 /* Arrival.swift */,
+				93FA2DD02F49519800BA00A5 /* ArrivalDTO.swift */,
+				93FA2DD12F49519800BA00A5 /* Favorite.swift */,
+				93FA2DD22F49519800BA00A5 /* FavoriteDTO.swift */,
+				93FA2DD32F49519800BA00A5 /* Mapping+Arrival.swift */,
+				93FA2DD42F49519800BA00A5 /* Mapping+Favorite.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		93FA2DD82F49519800BA00A5 /* Networking */ = {
+			isa = PBXGroup;
+			children = (
+				93FA2DD62F49519800BA00A5 /* CTAService.swift */,
+				93FA2DD72F49519800BA00A5 /* CTAServiceLive.swift */,
+			);
+			path = Networking;
+			sourceTree = "<group>";
+		};
+		93FA2DDA2F49519800BA00A5 /* Persistence */ = {
+			isa = PBXGroup;
+			children = (
+				93FA2DD92F49519800BA00A5 /* SharedStore.swift */,
+			);
+			path = Persistence;
+			sourceTree = "<group>";
+		};
+		93FA2DDD2F49519800BA00A5 /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				93FA2DDB2F49519800BA00A5 /* Arrivals+Refresh.swift */,
+				93FA2DDC2F49519800BA00A5 /* Logger.swift */,
+			);
+			path = Utilities;
+			sourceTree = "<group>";
+		};
+		93FA2DDE2F49519800BA00A5 /* Core */ = {
+			isa = PBXGroup;
+			children = (
+				93FA2DD52F49519800BA00A5 /* Models */,
+				93FA2DD82F49519800BA00A5 /* Networking */,
+				93FA2DDA2F49519800BA00A5 /* Persistence */,
+				93FA2DDD2F49519800BA00A5 /* Utilities */,
+			);
+			path = Core;
+			sourceTree = "<group>";
+		};
+		93FA2DE62F49519800BA00A5 /* TimesWidget */ = {
+			isa = PBXGroup;
+			children = (
+				93FA2DDF2F49519800BA00A5 /* CtaTimesView.swift */,
+				93FA2DE02F49519800BA00A5 /* CtaTimesView+Preview.swift */,
+				93FA2DE12F49519800BA00A5 /* CtaTimesWidget.swift */,
+				93FA2DE22F49519800BA00A5 /* FavoriteSelectionIntent.swift */,
+				93FA2DE32F49519800BA00A5 /* Provider.swift */,
+				93FA2DE42F49519800BA00A5 /* RefreshTimesIntent.swift */,
+				93FA2DE52F49519800BA00A5 /* TimesViewModel.swift */,
+			);
+			path = TimesWidget;
+			sourceTree = "<group>";
+		};
+		93FA2DE72F49519800BA00A5 /* Features */ = {
+			isa = PBXGroup;
+			children = (
+				93FA2DE62F49519800BA00A5 /* TimesWidget */,
+			);
+			path = Features;
+			sourceTree = "<group>";
+		};
+		93FA2DE92F49519800BA00A5 /* Stores */ = {
+			isa = PBXGroup;
+			children = (
+				93FA2DE82F49519800BA00A5 /* FavoritesStore.swift */,
+			);
+			path = Stores;
+			sourceTree = "<group>";
+		};
+		93FA2DF02F49519800BA00A5 /* ctaTimes */ = {
+			isa = PBXGroup;
+			children = (
+				93FA2DDE2F49519800BA00A5 /* Core */,
+				93FA2DE72F49519800BA00A5 /* Features */,
+				93FA2DE92F49519800BA00A5 /* Stores */,
+				93FA2DEA2F49519800BA00A5 /* AppIntent.swift */,
+				93FA2DEB2F49519800BA00A5 /* Assets.xcassets */,
+				93FA2DEC2F49519800BA00A5 /* ctaTimesBundle.swift */,
+				93FA2DED2F49519800BA00A5 /* ctaTimesControl.swift */,
+				93FA2DEE2F49519800BA00A5 /* ctaTimesLiveActivity.swift */,
+				93FA2DEF2F49519800BA00A5 /* Info.plist */,
+			);
+			path = ctaTimes;
 			sourceTree = "<group>";
 		};
 		9E1C2D377BE3E7D41042FFBB /* DailyCommuter */ = {
@@ -255,6 +379,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 93B3427C2E386E88006EC422 /* Build configuration list for PBXNativeTarget "ctaTimesExtension" */;
 			buildPhases = (
+				EDCEF53098212365B055E31F /* [Validate] No React imports in widget sources */,
 				93B3425E2E386E85006EC422 /* Sources */,
 				93B3425F2E386E85006EC422 /* Frameworks */,
 				93B342602E386E85006EC422 /* Resources */,
@@ -262,9 +387,6 @@
 			buildRules = (
 			);
 			dependencies = (
-			);
-			fileSystemSynchronizedGroups = (
-				93B342672E386E85006EC422 /* ctaTimes */,
 			);
 			name = ctaTimesExtension;
 			productName = ctaTimesExtension;
@@ -324,6 +446,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				93FA2E082F49519800BA00A5 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -420,6 +543,21 @@
 			shellPath = /bin/sh;
 			shellScript = "# This script configures Expo modules and generates the modules provider file.\nbash -l -c \"./Pods/Target\\ Support\\ Files/Pods-DailyCommuter/expo-configure-project.sh\"\n";
 		};
+		EDCEF53098212365B055E31F /* [Validate] No React imports in widget sources */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[Validate] No React imports in widget sources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/bash;
+			shellScript = "#!/bin/bash\n# Validate: No React Native imports in widget extension source files.\n# This prevents accidental `import React` in shared code that would\n# break the widget build.\n\nFORBIDDEN_PATTERNS=(\n    \"^import React$\"\n    \"^import React \"\n    \"^import ReactAppDependencyProvider\"\n    \"#import <React/\"\n    \"RCTPromiseResolveBlock\"\n    \"RCTPromiseRejectBlock\"\n    \"RCTBridgeModule\"\n)\n\nERRORS_FOUND=0\n\n# Scan all .swift and .m files in the ctaTimes directory\nwhile IFS= read -r -d '' file; do\n    for pattern in \"${FORBIDDEN_PATTERNS[@]}\"; do\n        if grep -qE \"$pattern\" \"$file\"; then\n            echo \"error: Forbidden React Native import found in widget-eligible file: $file\"\n            echo \"error: Pattern matched: $pattern\"\n            echo \"error: This file is compiled by the ctaTimesExtension target, which cannot link React Native.\"\n            echo \"error: Move React-dependent code to ios/DailyCommuter/Bridge/ or wrap it in #if APP_TARGET.\"\n            ERRORS_FOUND=$((ERRORS_FOUND + 1))\n        fi\n    done\ndone < <(find \"${SRCROOT}/ctaTimes\" \\( -name \"*.swift\" -o -name \"*.m\" \\) -print0)\n\nif [ $ERRORS_FOUND -gt 0 ]; then\n    echo \"error: Found $ERRORS_FOUND React Native import violation(s) in widget source files.\"\n    exit 1\nfi\n\necho \"Widget source validation passed: no React Native imports found.\"\n";
+		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -429,6 +567,18 @@
 			files = (
 				F11748422D0307B40044C1D9 /* AppDelegate.swift in Sources */,
 				06EEA4827ED0B03648D311C6 /* ExpoModulesProvider.swift in Sources */,
+				7ED1DF45810A88FE694E83D0 /* FavoritesBridge.swift in Sources */,
+				93FA2E0A2F49519800BA00A5 /* ArrivalDTO.swift in Sources */,
+				93FA2E0B2F49519800BA00A5 /* Mapping+Favorite.swift in Sources */,
+				93FA2E0C2F49519800BA00A5 /* SharedStore.swift in Sources */,
+				93FA2E0D2F49519800BA00A5 /* Mapping+Arrival.swift in Sources */,
+				93FA2E0E2F49519800BA00A5 /* CTAServiceLive.swift in Sources */,
+				93FA2E0F2F49519800BA00A5 /* FavoritesStore.swift in Sources */,
+				93FA2E102F49519800BA00A5 /* CTAService.swift in Sources */,
+				93FA2E112F49519800BA00A5 /* Favorite.swift in Sources */,
+				93FA2E122F49519800BA00A5 /* Arrival.swift in Sources */,
+				93FA2E132F49519800BA00A5 /* FavoriteDTO.swift in Sources */,
+				917F19CA5EB4945BEFBF3758 /* FavoritesBridge.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -436,6 +586,29 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				93FA2DF12F49519800BA00A5 /* Arrival.swift in Sources */,
+				93FA2DF22F49519800BA00A5 /* ArrivalDTO.swift in Sources */,
+				93FA2DF32F49519800BA00A5 /* Favorite.swift in Sources */,
+				93FA2DF42F49519800BA00A5 /* FavoriteDTO.swift in Sources */,
+				93FA2DF52F49519800BA00A5 /* Mapping+Arrival.swift in Sources */,
+				93FA2DF62F49519800BA00A5 /* Mapping+Favorite.swift in Sources */,
+				93FA2DF72F49519800BA00A5 /* CTAService.swift in Sources */,
+				93FA2DF82F49519800BA00A5 /* CTAServiceLive.swift in Sources */,
+				93FA2DF92F49519800BA00A5 /* SharedStore.swift in Sources */,
+				93FA2DFA2F49519800BA00A5 /* Arrivals+Refresh.swift in Sources */,
+				93FA2DFB2F49519800BA00A5 /* Logger.swift in Sources */,
+				93FA2DFC2F49519800BA00A5 /* CtaTimesView.swift in Sources */,
+				93FA2DFD2F49519800BA00A5 /* CtaTimesView+Preview.swift in Sources */,
+				93FA2DFE2F49519800BA00A5 /* CtaTimesWidget.swift in Sources */,
+				93FA2DFF2F49519800BA00A5 /* FavoriteSelectionIntent.swift in Sources */,
+				93FA2E002F49519800BA00A5 /* Provider.swift in Sources */,
+				93FA2E012F49519800BA00A5 /* RefreshTimesIntent.swift in Sources */,
+				93FA2E022F49519800BA00A5 /* TimesViewModel.swift in Sources */,
+				93FA2E032F49519800BA00A5 /* FavoritesStore.swift in Sources */,
+				93FA2E042F49519800BA00A5 /* AppIntent.swift in Sources */,
+				93FA2E052F49519800BA00A5 /* ctaTimesBundle.swift in Sources */,
+				93FA2E062F49519800BA00A5 /* ctaTimesControl.swift in Sources */,
+				93FA2E072F49519800BA00A5 /* ctaTimesLiveActivity.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -457,7 +630,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = DailyCommuter/DailyCommuter.entitlements;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 8;
 				ENABLE_BITCODE = NO;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
@@ -469,7 +642,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 2.0;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -478,6 +651,7 @@
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_DEBUG";
 				PRODUCT_BUNDLE_IDENTIFIER = com.aaronwilliams.commuterv4;
 				PRODUCT_NAME = DailyCommuter;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) DEBUG APP_TARGET";
 				SWIFT_OBJC_BRIDGING_HEADER = "DailyCommuter-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -493,14 +667,14 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = DailyCommuter/DailyCommuter.entitlements;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 8;
 				INFOPLIST_FILE = DailyCommuter/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 2.0;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -509,6 +683,7 @@
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_RELEASE";
 				PRODUCT_BUNDLE_IDENTIFIER = com.aaronwilliams.commuterv4;
 				PRODUCT_NAME = DailyCommuter;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) APP_TARGET";
 				SWIFT_OBJC_BRIDGING_HEADER = "DailyCommuter-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -660,7 +835,7 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_ENTITLEMENTS = ctaTimesExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 8;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
@@ -675,7 +850,7 @@
 					"@executable_path/../../Frameworks",
 				);
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 2.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_DEBUG";
@@ -687,6 +862,7 @@
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Debug;
 		};
@@ -706,7 +882,7 @@
 				CODE_SIGN_ENTITLEMENTS = ctaTimesExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 8;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
@@ -721,7 +897,7 @@
 					"@executable_path/../../Frameworks",
 				);
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 2.0;
 				MTL_FAST_MATH = YES;
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_RELEASE";
 				PRODUCT_BUNDLE_IDENTIFIER = com.aaronwilliams.commuterv4.ctaTimes;
@@ -731,6 +907,7 @@
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Release;
 		};

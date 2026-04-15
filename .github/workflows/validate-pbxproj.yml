@@ -1,0 +1,40 @@
+name: Validate Xcode Project Format
+
+on:
+  pull_request:
+    paths:
+      - 'ios/**/*.pbxproj'
+
+jobs:
+  check-pbxproj-format:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check objectVersion
+        run: |
+          PBXPROJ="ios/DailyCommuter.xcodeproj/project.pbxproj"
+          ALLOWED_VERSION="60"
+
+          CURRENT_VERSION=$(grep -m1 'objectVersion' "$PBXPROJ" | sed 's/[^0-9]//g')
+          echo "objectVersion found: $CURRENT_VERSION"
+
+          if [ "$CURRENT_VERSION" != "$ALLOWED_VERSION" ]; then
+            echo "::error file=$PBXPROJ::objectVersion is $CURRENT_VERSION, expected $ALLOWED_VERSION. Xcode may have silently upgraded the project format."
+            exit 1
+          fi
+
+      - name: Check for Xcode 16-only ISA types
+        run: |
+          PBXPROJ="ios/DailyCommuter.xcodeproj/project.pbxproj"
+          if grep -q 'PBXFileSystemSynchronizedRootGroup' "$PBXPROJ"; then
+            echo "::error file=$PBXPROJ::Contains PBXFileSystemSynchronizedRootGroup (Xcode 16+ only). Right-click the folder in Xcode and choose 'Convert to Group'."
+            exit 1
+          fi
+          if grep -q 'PBXFileSystemSynchronizedBuildFileExceptionSet' "$PBXPROJ"; then
+            echo "::error file=$PBXPROJ::Contains PBXFileSystemSynchronizedBuildFileExceptionSet (Xcode 16+ only)."
+            exit 1
+          fi
+
+      - name: Validation passed
+        run: echo "Xcode project format is valid (objectVersion=60, no synchronized groups)"

@@ -26,14 +26,11 @@ export default function Button({ text, selected = false, onPress, style, }: butt
 
 const styles = StyleSheet.create({
     base: {
-        //width: 320,
         width: "100%",
         height: 50,
-        //flex: 1,
-        //alignSelf: "flex-start",
         padding: 3,
         borderWidth: 2,
-        borderColor: '#E6E6E6',// default border
+        borderColor: '#E6E6E6',
         borderRadius: 12,
         backgroundColor: '#fff',
         alignItems: 'center',
@@ -42,15 +39,6 @@ const styles = StyleSheet.create({
     selected: {
         borderColor: '#0078C1',
         borderWidth: 2,
-    },
-    button: {
-        borderRadius: 10,
-        width: '100%',
-        height: '100%',
-        alignItems: 'center',
-        justifyContent: 'center',
-        flexDirection: 'row',
-        backgroundColor: '#fff'
     },
     label: {
         color: '#000000',

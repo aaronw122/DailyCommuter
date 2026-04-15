@@ -1,47 +1,43 @@
 import React from 'react'
-import { View, Text, StyleSheet, Dimensions } from 'react-native'
+import { View, Text, StyleSheet } from 'react-native'
 import Ionicons from '@expo/vector-icons/Ionicons';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import Time from './times'
-import type { SimpleTime } from '@/server/src/ctaService';
+import type { SimpleTime } from '@/app/types/types';
 
 
-type Props ={
-    times: SimpleTime[],
+type Props = {
+    times: SimpleTime[];
     header: number | string;
     subheader: string;
     stop: string;
+    isLoading?: boolean;
 }
 
 
-export default function StopCard ({times=[], header, subheader, stop}:Props) {
+export default function StopCard ({times=[], header, subheader, stop, isLoading}:Props) {
 
     return (
-
         <View style={styles.card}>
-
-            {/* Header */}
             <View style={styles.header}>
                 <Ionicons name="bus" size={35} color="#79C747"/>
-                <Text style={styles.title}>
-                    {/* route number */}
-                    {header}
-                </Text>
+                <Text style={styles.title}>{header}</Text>
             </View>
             <View style={styles.subheader}>
                 <AntDesign name="arrowright" size={25} color="black" />
-                <Text style={styles.subtitle}>
-                    {/* direction */}
-                    {subheader}
-                </Text>
+                <Text style={styles.subtitle}>{subheader}</Text>
             </View>
             <Text style={styles.text}>
                 {stop}
             </Text>
             <View style={styles.times}>
-                {times?.map(({times: time, dest}, i) => (
-                    <Time key={i} time={time} dest={dest}/>
-                ))}
+                {times.length === 0 && !isLoading ? (
+                    <Text style={styles.noTimes}>No times available</Text>
+                ) : (
+                    times.map(({times: time, dest}, i) => (
+                        <Time key={i} time={time} dest={dest}/>
+                    ))
+                )}
             </View>
         </View>
     );
@@ -93,5 +89,10 @@ const styles = StyleSheet.create({
         justifyContent: "flex-start",
         paddingBottom: 10,
 
+    },
+    noTimes: {
+        color: '#444444',
+        fontSize: 17,
+        paddingTop: 10,
     },
 });

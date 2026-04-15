@@ -1,6 +1,5 @@
 import Page from "@/components/routePage";
 import React, {useState, useEffect} from 'react';
-import {StyleSheet} from "react-native";
 import { useRouter } from 'expo-router';
 import {SimpleDirection, SimpleStop} from "@/app/types/types";
 import {busRoutesData} from '@/app/routesData';
@@ -9,20 +8,10 @@ const CTA_URL = process.env.EXPO_PUBLIC_API_URL ?? '';
 
 export default function Bus (){
     const [routeId, setRouteId]    = useState<string | number | null>(null);
-
     const [routeName, setRouteName]    = useState<string | null>(null);
-
     const type = "bus";
 
-    useEffect(() => {
-        console.log('Route changed:', routeId);
-    }, [routeId]);
-
     const [direction, setDirection] = useState<string | null>(null);
-    useEffect(() => {
-        console.log('Direction changed:', direction);
-    }, [direction]);
-
     const [directionOptions, setDirectionOptions] = useState<SimpleDirection[]>([]);
 
     const showDirections = directionOptions.length > 0;
@@ -43,10 +32,6 @@ export default function Bus (){
 
 
     const [stopId, setStopId] = useState<number | string | null>(null);
-    useEffect(() => {
-        console.log('Stop changed:', stopId);
-    }, [stopId]);
-
     const [stopOptions, setStopOptions] = useState<SimpleStop[]>([]);
 
     const showStops = stopOptions.length > 0;
@@ -102,7 +87,6 @@ export default function Bus (){
             {...(showDirections? {
                 directionHeader:"Direction",
                 direction1,
-                //technically this is implied with new syntax, don't have to add the ":direction1"
                 direction2,
                 selectedDirection:selectedDirectionIndex,
                 onDirectionSelect: (idx: 0 | 1) => {
@@ -139,54 +123,9 @@ export default function Bus (){
                         type
                     },
                 });
-                console.log('save clicked')
             }}
 
             theme = 'primary'
-
-              />
+        />
     );
-
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        paddingHorizontal: 25,
-        paddingTop: 35, // instead of absolute left/top
-        backgroundColor: 'white',
-    },
-    routeHeader: {
-        marginBottom: 25,
-    },
-    dropdownWrapper: {
-        //top: 40,
-        //  left: 0,
-        flexDirection: "row",
-        alignItems: 'stretch',
-    }
-});
-
-
-/*
-<GestureHandlerRootView style={styles.container}>
-    <View style={styles.routeHeader}>
-        <Header2 text="Route"/>
-    </View>
-    <View style={styles.dropdownWrapper}>
-        <DropdownComponent data={busDropdownMock} placeholder={'Select a route'} searchPlaceholder={'Find a route'}/>
-    </View>
-    <View style={styles.routeHeader}>
-        <Header2 text="Direction"/>
-    </View>
-    <View style={styles.dropdownWrapper}>
-        { two box selector }
-    </View>
-    <View style={styles.routeHeader}>
-        <Header2 text="Stop"/>
-    </View>
-    <View style={styles.dropdownWrapper}>
-        <DropdownComponent data={busDropdownMock} placeholder={'Select a route'} searchPlaceholder={'Find a route'}/>
-    </View>
-</GestureHandlerRootView>
-*/

@@ -45,15 +45,6 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
     },
-    default: {
-        marginTop: 45,
-        width: '100%',
-        height: 50,
-        borderRadius: 10,
-        backgroundColor: '#0078C1',
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
     primaryText: {
         color: '#ffffff',
         fontSize: 16,

@@ -17,11 +17,9 @@ export default function FavHeader({text}: Props)  {
 
 const styles = StyleSheet.create({
     header: {
-        // flex: 1,
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
-        paddingVertical: 0,
         width: '100%',
         backgroundColor: '#ffffff',
     },
