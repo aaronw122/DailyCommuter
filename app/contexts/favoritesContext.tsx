@@ -12,9 +12,7 @@ type Action =
 function reducer(state: Favorite[], action: Action): Favorite[] {
     switch (action.type) {
         case 'load':    return action.favorites;
-        // add action = adds a new Favorite (in the top-level list).
         case 'add':     return [...state, action.favorite];
-        // update action = replaces an existing Favorite (including whatever changes you made to its stops).
         case 'update':  return state.map(f =>
             f.id === action.favorite.id
                 ? action.favorite
@@ -34,7 +32,6 @@ export const FavoritesContext = createContext<{
 
 
 export function FavoritesProvider({ children }: { children: React.ReactNode }) {
-    // 8
     const [favorites, dispatch] = useReducer(reducer, []);
     const didLoadRef = useRef(false);
 

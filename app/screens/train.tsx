@@ -9,23 +9,9 @@ const CTA_URL = process.env.EXPO_PUBLIC_API_URL ?? '';
 
 export default function Train (){
     const type = 'train'
-
     const [routeId, setRouteId]    = useState<string | number | null>(null);
-
     const [routeName, setRouteName]    = useState<string | null>(null);
-
-    /*
-    useEffect(() => {
-        console.log('Route changed:', routeId);
-    }, [routeId]);
-    */
-
     const [direction, setDirection] = useState<string | null>(null);
-    /*
-    useEffect(() => {
-        console.log('Direction changed:', direction);
-    }, [direction]);
-     */
 
 const [directionOptions, setDirectionOptions] = useState<string[]>([]);
 
@@ -45,13 +31,6 @@ useEffect(() => {
 
 
 const [stopId, setStopId] = useState<number | string | null>(null);
-
-/*
-useEffect(() => {
-    console.log('Stop changed:', stopId);
-}, [stopId]);
- */
-
 const [stopOptions, setStopOptions] = useState<TrainStop[]>([]);
 
 const showStops = stopOptions.length > 0;
@@ -62,7 +41,6 @@ useEffect(() => {
     if (routeId == null || direction == null) {
         return;
     }
-    console.log("direction:", direction)
     fetch(`${CTA_URL}/api/train/stops?routeId=${routeId}&direction=${direction}`)
         .then(response => response.json())
         .then((stops: TrainStop[]) => setStopOptions(stops))
@@ -141,7 +119,6 @@ return(
                     type
                 },
             });
-            console.log('save clicked')
         }}
 
         theme = 'primary'

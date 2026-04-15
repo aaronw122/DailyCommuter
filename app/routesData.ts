@@ -143,7 +143,6 @@ export const trainDirectionData = [
     { value: "Blue", label: ["O'Hare", "Forest Park"] },
     { value: "Brn",  label: ["Kimball", "Loop"] },
     { value: "G",    label: ["Harlem/Lake", "South"] },
-    //what south means above is Ashland/63rd OR Cottage Grove
     { value: "Org",  label: ["Loop", "Midway"] },
     { value: "P",    label: ["Linden", "Howard or Loop"] },
     { value: "Pink", label: ["Loop", "54th/Cermak"] },

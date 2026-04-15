@@ -23,7 +23,7 @@ export interface SimpleStop {
 
 export interface SimpleTime {
     times: string;
-    dest: any;
+    dest: string;
 }
 
 export interface TrainStop {

@@ -88,7 +88,6 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         paddingHorizontal: 25,
-        paddingTop: 0, // instead of absolute left/top
         backgroundColor: 'white',
     },
     routeHeader: {
@@ -96,8 +95,6 @@ const styles = StyleSheet.create({
         marginBottom: 25,
     },
     dropdownWrapper: {
-        //top: 40,
-        //  left: 0,
         flexDirection: "row",
         alignItems: 'stretch',
     }

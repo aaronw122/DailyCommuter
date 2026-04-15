@@ -60,7 +60,6 @@ export default function DropdownComponent ({data, placeholder, searchPlaceholder
 const styles = StyleSheet.create({
     dropdown: {
         height: 50,
-       // width: 100,
         flex: 1,
         alignSelf: "flex-start",
         backgroundColor: 'white',

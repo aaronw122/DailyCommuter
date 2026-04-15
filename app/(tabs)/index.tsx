@@ -1,11 +1,11 @@
 import { StyleSheet } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import MyTabs from '@/components/segment'
+import TransitTabs from '@/components/segment'
 
 export default function Index() {
     return (
         <GestureHandlerRootView style={styles.container}>
-            <MyTabs/>
+            <TransitTabs/>
         </GestureHandlerRootView>
     );
 }
@@ -15,7 +15,5 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#ffffff',
-        paddingTop: 0,
     },
 });
-

@@ -7,7 +7,7 @@ import {StyleSheet, ViewStyle, View} from "react-native";
 const Tab = createMaterialTopTabNavigator();
 
 
-export default function MyTabs() {
+export default function TransitTabs() {
     return (
         <View style = {styles.tabs}>
             <Tab.Navigator
@@ -16,7 +16,6 @@ export default function MyTabs() {
                     tabBarLabelStyle: { fontSize: 14, fontWeight: 'bold' },
                     tabBarIndicatorStyle: { backgroundColor: 'black' },
                     swipeEnabled: true,
-                    //
                     sceneStyle: { backgroundColor: 'white' },
                 }}
                 initialRouteName="Bus"
@@ -34,7 +33,6 @@ const styles = StyleSheet.create({
     tabs: {
         alignSelf: 'stretch',
         flex: 17,
-        // left: 30,
     },
 
 });

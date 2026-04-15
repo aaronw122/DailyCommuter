@@ -1,7 +1,6 @@
 import React from 'react'
-import {View, Text, StyleSheet, TextInput} from 'react-native'
+import {View, StyleSheet, TextInput} from 'react-native'
 import {GestureHandlerRootView} from "react-native-gesture-handler";
-import AntDesign from '@expo/vector-icons/AntDesign';
 import CtaButton from "@/components/cta";
 import {useRouter} from "expo-router";
 import {useFavorites} from '@/app/contexts/favoritesContext';
@@ -11,29 +10,26 @@ import {FavoriteStop} from "@/app/types/types";
 
 
 export default function CreateFavorite() {
-    const [text, onChangeText] = React.useState('');
+    const [name, setName] = React.useState('');
     const router = useRouter();
     const {dispatch} = useFavorites();
 
     const handleSave = () => {
-        if (!text.trim()) return;  // guard
+        if (!name.trim()) return;
         dispatch({
             type: 'add',
-            favorite: { id: uuid(), name: text.trim(), stops: [] as FavoriteStop[]}
+            favorite: { id: uuid(), name: name.trim(), stops: [] as FavoriteStop[]}
         });
-        // navigate back or clear input here
     };
-
 
     return (
         <GestureHandlerRootView style={styles.container}>
-
             <View style={styles.textbox}>
                 <TextInput
                     placeholder={"Title your favorite"}
                     style={styles.input}
-                    onChangeText={onChangeText}
-                    value={text}
+                    onChangeText={setName}
+                    value={name}
                     />
             </View>
 
@@ -43,16 +39,11 @@ export default function CreateFavorite() {
                     onPress={()=>{
                         handleSave();
                         router.back();
-
-                        console.log(text, 'saved')
-
                     }}
                     theme = 'primary'
                 />
             </View>
-
         </GestureHandlerRootView>
-
     )
 }
 
@@ -74,10 +65,6 @@ const styles = StyleSheet.create({
     },
     textbox: {
         marginTop: 15,
-    },
-    title: {
-        marginTop: 0,
-        justifyContent: 'center',
     },
     button: {
         bottom: -475,

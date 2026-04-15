@@ -1,0 +1,18 @@
+#!/bin/bash
+
+PBXPROJ="ios/DailyCommuter.xcodeproj/project.pbxproj"
+ALLOWED_OBJECT_VERSION="60"
+
+if git diff --cached --name-only | grep -q "$PBXPROJ"; then
+  STAGED_VERSION=$(git show :$PBXPROJ | grep -m1 'objectVersion' | sed 's/[^0-9]//g')
+
+  if [ "$STAGED_VERSION" != "$ALLOWED_OBJECT_VERSION" ]; then
+    echo "BLOCKED: objectVersion changed to $STAGED_VERSION (must be $ALLOWED_OBJECT_VERSION)"
+    exit 1
+  fi
+
+  if git show :$PBXPROJ | grep -q 'PBXFileSystemSynchronizedRootGroup'; then
+    echo "BLOCKED: PBXFileSystemSynchronizedRootGroup detected (Xcode 16+ only)"
+    exit 1
+  fi
+fi
