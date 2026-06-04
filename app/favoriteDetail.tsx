@@ -1,10 +1,10 @@
 import React, {useLayoutEffect} from 'react'
 import { ScrollView, StyleSheet } from 'react-native'
-import StopCard from “@/components/stopCard”;
+import StopCard from "@/components/stopCard";
 import {useLocalSearchParams, useNavigation} from 'expo-router';
-import {useFavorites} from “@/app/contexts/favoritesContext”;
+import {useFavorites} from "@/app/contexts/favoritesContext";
 import type {Favorite, FavoriteStop, SimpleTime} from '@/app/types/types';
-import {useQueries } from “@tanstack/react-query”;
+import {useQueries } from "@tanstack/react-query";
 
 const CTA_URL = process.env.EXPO_PUBLIC_API_URL ?? '';
 
