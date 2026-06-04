@@ -31,7 +31,7 @@ export default function FavoriteDetail() {
 
     const timeQueries = useQueries({
             queries: stops.map((stop)=> ({
-                queryKey: [“times”, stop.routeId, stop.direction, stop.stopId, stop.type] as const,
+                queryKey: ["times", stop.routeId, stop.direction, stop.stopId, stop.type] as const,
                 queryFn: () => stop.type === 'bus'
                     ? fetchBusTimes(stop.routeId, stop.direction, stop.stopId)
                     : fetchTrainTimes(stop.stopId, stop.routeId),
